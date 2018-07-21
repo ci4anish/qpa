@@ -1,4 +1,16 @@
-<div>Here will be filter</div>
+<div class="filter-wrapper">
+  <mat-form-field class="filter-field">
+    <input matInput type="text" placeholder="Filter" [formControl]="filterFormControl">
+    <button class="clear-button"
+            mat-button
+            *ngIf="filterFormControl.value"
+            matSuffix
+            mat-icon-button
+            aria-label="Clear" (click)="clearFilter()">
+      x
+    </button>
+  </mat-form-field>
+</div>
 <mat-accordion displayMode="flat">
   <mat-expansion-panel *ngFor="let menuItem of menu">
     <mat-expansion-panel-header collapsedHeight="45px" expandedHeight="45px">

@@ -9,7 +9,7 @@ export class QuestionsMenuService {
   }
 
   getMenuItems(): any[] {
-    return (<any>window).sidebar_json;
+    return (<any>window).sidebar_json.slice();
   }
 
   getPreSelectedQuestion() {
@@ -27,25 +27,30 @@ export class QuestionsMenuService {
 
       if(menuItem.sub_areas){
         for (let j = 0; j < menuItem.sub_areas.length; j++) {
-          subMenuItem = menuItem.sub_areas[i];
+          subMenuItem = menuItem.sub_areas[j];
 
-          for (let j = 0; j < subMenuItem.questions.length; j++) {
-            question = subMenuItem.questions[i];
+          for (let k = 0; k < subMenuItem.questions.length; k++) {
+            question = subMenuItem.questions[k];
 
-            if(question.id = lastEditedId){
+            if(question.id === lastEditedId){
               return question;
             }
           }
         }
       } else {
-        for (let j = 0; j < menuItem.questions.length; j++) {
-          question = menuItem.questions[i];
+        for (let k = 0; k < menuItem.questions.length; k++) {
+          question = menuItem.questions[k];
 
-          if(question.id = lastEditedId){
+          if(question.id === lastEditedId){
             return question;
           }
         }
       }
     }
+  }
+
+  filterLeftMenu(filterValue: string): any[] {
+    //TODO replace this with actual filter
+    return this.getMenuItems();
   }
 }

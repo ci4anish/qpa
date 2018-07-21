@@ -9,6 +9,7 @@ import {
   MatInputModule,
   MatListModule
 } from '@angular/material';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
 import {AppComponent} from './app.component';
 import { SubmitToolbarComponent } from './submit-toolbar/submit-toolbar.component';
@@ -33,7 +34,9 @@ import { QuestionsMenuService } from './questions-menu.service';
     MatExpansionModule,
     MatRadioModule,
     MatInputModule,
-    MatListModule
+    MatListModule,
+    FormsModule,
+    ReactiveFormsModule
   ],
   providers: [QuestionsMenuService],
   bootstrap: [AppComponent]
