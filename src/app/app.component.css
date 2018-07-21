@@ -3,7 +3,7 @@
 }
 
 .left-menu{
-  flex-basis: 400px;
+  width: 400px;
 }
 
 .content-wrapper{

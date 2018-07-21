@@ -1,6 +1,14 @@
 <div class="header">Self assessment</div>
 <div class="details">
-  <div>Complete <span>{{questions_complete}}</span></div>
-  <div>Remaining <span>{{questions_remaining}}</span></div>
+  <div class="details-item completed">
+    <span class="details-title">Complete</span>
+    <span class="details-count">{{questions_complete}}</span>
+  </div>
+  <div class="details-item remaining">
+    <span class="details-title">Remaining</span>
+    <span class="details-count">{{questions_remaining}}</span>
+  </div>
 </div>
-<div>Submit</div>
+<div class="submit-btn-wrapper">
+  <a href="#" class="submit-btn">Submit</a>
+</div>

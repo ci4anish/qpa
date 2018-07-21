@@ -4,7 +4,13 @@
 /*TODO remove before deploy*/
 body{
   margin: 0;
+  font-family: "Helvetica", sans-serif;
 }
 .mat-expansion-panel-content .mat-expansion-panel-body{
   padding: 0;
+}
+
+.observation .mat-form-field-infix{
+  border: 1px solid #cecece;
+  padding: 10px;
 }
