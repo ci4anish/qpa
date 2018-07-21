@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import {QuestionsMenuService} from './questions-menu.service';
+import {Component} from '@angular/core';
+import {AppStateService} from './app-state.service';
 import {Router} from '@angular/router';
 
 @Component({
@@ -8,10 +8,16 @@ import {Router} from '@angular/router';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  constructor(private questionsMenuService: QuestionsMenuService, private router: Router){
-    let question = questionsMenuService.getPreSelectedQuestion();
-    let answerId = question ? question.answer_id : '';
-    console.log('answerId', answerId);
-    this.router.navigateByUrl('/answer/' + answerId);
+  constructor(private appStateService: AppStateService, private router: Router) {
+    let question = appStateService.getPreSelectedQuestion();
+    let redirectUrl;
+
+    if (question) {
+      redirectUrl = '/answer/' + question.answer_id
+    } else {
+      redirectUrl = '/start-page'
+    }
+
+    this.router.navigateByUrl(redirectUrl);
   }
 }

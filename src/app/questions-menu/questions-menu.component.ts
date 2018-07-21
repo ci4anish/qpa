@@ -1,10 +1,8 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
-import {QuestionsMenuService} from '../questions-menu.service';
+import {AppStateService} from '../app-state.service';
 import {FormControl} from '@angular/forms';
 import {Subscription} from 'rxjs/index';
 import 'rxjs/add/operator/debounceTime';
-import 'rxjs/add/operator/throttleTime';
-import 'rxjs/add/observable/fromEvent';
 
 @Component({
   selector: 'app-questions-menu',
@@ -16,11 +14,11 @@ export class QuestionsMenuComponent implements OnInit, OnDestroy {
   filterFormControl = new FormControl();
   private filterFormControlSub: Subscription;
 
-  constructor(private questionsMenuService: QuestionsMenuService) {
+  constructor(private appStateService: AppStateService) {
   }
 
   ngOnInit() {
-    this.menu = this.questionsMenuService.getMenuItems();
+    this.menu = this.appStateService.getMenuItems();
     this.subscribeFilter();
   }
 
@@ -37,9 +35,9 @@ export class QuestionsMenuComponent implements OnInit, OnDestroy {
 
   private applyFilterSearch(filterValue?: string) {
     if (filterValue) {
-      this.menu = this.questionsMenuService.filterLeftMenu(filterValue);
+      this.menu = this.appStateService.filterLeftMenu(filterValue);
     } else {
-      this.menu = this.questionsMenuService.getMenuItems();
+      this.menu = this.appStateService.getMenuItems();
     }
   }
 

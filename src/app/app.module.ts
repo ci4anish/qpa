@@ -12,18 +12,21 @@ import {
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
 import {AppComponent} from './app.component';
-import { SubmitToolbarComponent } from './submit-toolbar/submit-toolbar.component';
-import { QuestionsMenuComponent } from './questions-menu/questions-menu.component';
-import { AnswerDetailsComponent } from './answer-details/answer-details.component';
-import { AppRoutingModule } from './app-routing.module';
-import { QuestionsMenuService } from './questions-menu.service';
+import {SubmitToolbarComponent} from './submit-toolbar/submit-toolbar.component';
+import {QuestionsMenuComponent} from './questions-menu/questions-menu.component';
+import {AnswerDetailsComponent} from './answer-details/answer-details.component';
+import {AppRoutingModule} from './app-routing.module';
+import {AppStateService} from './app-state.service';
+import {StartPageComponent} from './start-page/start-page.component';
+import {HttpClientModule} from '@angular/common/http';
 
 @NgModule({
   declarations: [
     AppComponent,
     SubmitToolbarComponent,
     QuestionsMenuComponent,
-    AnswerDetailsComponent
+    AnswerDetailsComponent,
+    StartPageComponent
   ],
   imports: [
     BrowserModule,
@@ -36,9 +39,10 @@ import { QuestionsMenuService } from './questions-menu.service';
     MatInputModule,
     MatListModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    HttpClientModule
   ],
-  providers: [QuestionsMenuService],
+  providers: [AppStateService],
   bootstrap: [AppComponent]
 })
 export class AppModule {
