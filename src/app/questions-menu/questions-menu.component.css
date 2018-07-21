@@ -1,1 +1,4 @@
-
+.question-item{
+  padding-bottom: 10px;
+  cursor: pointer;
+}

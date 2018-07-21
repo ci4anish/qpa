@@ -16,12 +16,20 @@
             </mat-panel-description>
           </mat-expansion-panel-header>
 
-          <div *ngFor="let question of subMenuItem.questions">
+          <div class="question-item"
+               *ngFor="let question of subMenuItem.questions"
+               routerLink="/answer/{{question.answer_id}}">
             {{question.display_code + ' ' + question.name}}
           </div>
         </mat-expansion-panel>
       </mat-accordion>
-      <div *ngSwitchCase="false">2</div>
+      <div *ngSwitchCase="false">
+        <div class="question-item"
+             *ngFor="let question of menuItem.questions"
+             routerLink="/answer/{{question.answer_id}}">
+          {{question.display_code + ' ' + question.name}}
+        </div>
+      </div>
     </div>
   </mat-expansion-panel>
 </mat-accordion>

@@ -6,13 +6,16 @@ import {
   MatCheckboxModule,
   MatExpansionModule,
   MatRadioModule,
-  MatInputModule
+  MatInputModule,
+  MatListModule
 } from '@angular/material';
 
 import {AppComponent} from './app.component';
 import { SubmitToolbarComponent } from './submit-toolbar/submit-toolbar.component';
 import { QuestionsMenuComponent } from './questions-menu/questions-menu.component';
 import { AnswerDetailsComponent } from './answer-details/answer-details.component';
+import { AppRoutingModule } from './app-routing.module';
+import { QuestionsMenuService } from './questions-menu.service';
 
 @NgModule({
   declarations: [
@@ -23,14 +26,16 @@ import { AnswerDetailsComponent } from './answer-details/answer-details.componen
   ],
   imports: [
     BrowserModule,
+    AppRoutingModule,
     BrowserAnimationsModule,
     MatButtonModule,
     MatCheckboxModule,
     MatExpansionModule,
     MatRadioModule,
-    MatInputModule
+    MatInputModule,
+    MatListModule
   ],
-  providers: [],
+  providers: [QuestionsMenuService],
   bootstrap: [AppComponent]
 })
 export class AppModule {
