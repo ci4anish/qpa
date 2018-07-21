@@ -1,0 +1,11 @@
+.questionnaire-container{
+  display: flex;
+}
+
+.left-menu{
+  flex-basis: 400px;
+}
+
+.content-wrapper{
+  flex-grow: 1;
+}

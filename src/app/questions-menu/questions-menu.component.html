@@ -1,0 +1,27 @@
+<div>Here will be filter</div>
+<mat-accordion displayMode="flat">
+  <mat-expansion-panel *ngFor="let menuItem of menu">
+    <mat-expansion-panel-header collapsedHeight="45px" expandedHeight="45px">
+      <mat-panel-description>
+        {{menuItem.name | uppercase}}
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+
+    <div [ngSwitch]="!!menuItem.sub_areas">
+      <mat-accordion displayMode="flat" *ngSwitchCase="true">
+        <mat-expansion-panel *ngFor="let subMenuItem of menuItem.sub_areas">
+          <mat-expansion-panel-header collapsedHeight="45px" expandedHeight="45px">
+            <mat-panel-description>
+              {{subMenuItem.name | uppercase}}
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <div *ngFor="let question of subMenuItem.questions">
+            {{question.display_code + ' ' + question.name}}
+          </div>
+        </mat-expansion-panel>
+      </mat-accordion>
+      <div *ngSwitchCase="false">2</div>
+    </div>
+  </mat-expansion-panel>
+</mat-accordion>

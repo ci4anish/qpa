@@ -1,0 +1,19 @@
+:host{
+  display: flex;
+  height: 55px;
+  background: #ebf1f5;
+}
+
+.header{
+  flex-grow: 1;
+  font-size: 24px;
+  color: #4d76c9;
+  display: flex;
+  align-items: center;
+  padding-left: 35px;
+}
+
+.details{
+  display: flex;
+  align-items: center;
+}
