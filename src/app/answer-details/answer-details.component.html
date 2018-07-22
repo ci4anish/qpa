@@ -9,6 +9,7 @@
   <div class="checklist-items">
     <form [formGroup]="checklistItemsForm">
       <mat-checkbox [formControl]="item"
+                    [color]="'primary'"
                     class="checklist-item"
                     *ngFor="let item of checklistItems.controls; let i=index"
                     value="{{item.id}}">
@@ -22,6 +23,7 @@
       <form [formGroup]="complianceOptionForm">
         <mat-radio-group formControlName="compliance_option">
           <mat-radio-button class="compliance-option"
+                            [color]="'primary'"
                             *ngFor="let option of answer.all_compliance_options"
                             value="{{option.id}}">
             {{option.name}}

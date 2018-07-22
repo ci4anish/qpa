@@ -7,10 +7,12 @@ import {HttpClient} from '@angular/common/http';
 export class AppStateService {
 
   private menu;
+  private assessmentCode: string;
   private endpointUrl: string = 'https://qpa.codesource.com.au/api/web.protocoldocumentanswerset/';
 
   constructor(private http: HttpClient) {
     this.menu = (<any>window).sidebar_json.slice();
+    this.assessmentCode = (<any>window).assessment_code;
   }
 
   getMenuItems(): any[] {
@@ -65,15 +67,12 @@ export class AppStateService {
     return firstFoundQuestion;
   }
 
-  filterLeftMenu(filterValue: string): any[] {
-    //TODO replace this with actual filter
-    return this.getMenuItems();
+  filterLeftMenu(filterValue: string) {
+    return this.http.get(`https://qpa.codesource.com.au/practice/assessment/${this.assessmentCode}/questions/?q=${filterValue}`);
   }
 
   fetchAnswer(answerId: number) {
-    //TODO this if for testing remove later
-    answerId = 27;
-    return this.http.get(this.endpointUrl + answerId);
+    return this.http.get(this.endpointUrl + 27);
   }
 
   updateAnswer(answerId: number, newValue: any) {

@@ -11,6 +11,7 @@ import 'rxjs/add/operator/debounceTime';
 })
 export class QuestionsMenuComponent implements OnInit, OnDestroy {
   menu: any[];
+  selectedQuestion: any;
   filterFormControl = new FormControl();
   private filterFormControlSub: Subscription;
 
@@ -35,7 +36,9 @@ export class QuestionsMenuComponent implements OnInit, OnDestroy {
 
   private applyFilterSearch(filterValue?: string) {
     if (filterValue) {
-      this.menu = this.appStateService.filterLeftMenu(filterValue);
+      this.appStateService.filterLeftMenu(filterValue).subscribe((filteredMenu: any[]) => {
+        this.menu = filteredMenu;
+      });
     } else {
       this.menu = this.appStateService.getMenuItems();
     }

@@ -15,35 +15,40 @@
   <mat-expansion-panel *ngFor="let menuItem of menu"
                        (opened)="menuItem.panelOpenState = true"
                        (closed)="menuItem.panelOpenState = undefined">
-    <mat-expansion-panel-header collapsedHeight="45px" expandedHeight="60px">
+    <mat-expansion-panel-header collapsedHeight="60px" expandedHeight="60px"
+                                [ngClass]="{'active-header': menuItem.panelOpenState}">
       <mat-panel-description>
         <div [ngClass]="{'active-item': menuItem.panelOpenState}">{{menuItem.name | uppercase}}</div>
       </mat-panel-description>
     </mat-expansion-panel-header>
 
     <div [ngSwitch]="!!menuItem.sub_areas">
-      <mat-accordion displayMode="flat" *ngSwitchCase="true">
-        <mat-expansion-panel *ngFor="let subMenuItem of menuItem.sub_areas"
-                             (opened)="subMenuItem.panelOpenState = true"
-                             (closed)="subMenuItem.panelOpenState = undefined">
-          <mat-expansion-panel-header collapsedHeight="45px" expandedHeight="45px">
-            <mat-panel-description>
-              <div [ngClass]="{'active-item': subMenuItem.panelOpenState}">
-                {{subMenuItem.name | uppercase}}
-              </div>
-            </mat-panel-description>
-          </mat-expansion-panel-header>
+      <div *ngSwitchCase="true" class="sub-menu-content">
+        <mat-accordion displayMode="flat">
+          <mat-expansion-panel *ngFor="let subMenuItem of menuItem.sub_areas"
+                               (opened)="subMenuItem.panelOpenState = true"
+                               (closed)="subMenuItem.panelOpenState = undefined">
+            <mat-expansion-panel-header collapsedHeight="45px" expandedHeight="45px"
+                                        [ngClass]="{'active-header': subMenuItem.panelOpenState}">
+              <mat-panel-description>
+                <div>
+                  {{subMenuItem.name}}
+                </div>
+              </mat-panel-description>
+            </mat-expansion-panel-header>
 
-          <div class="collapse-menu-content">
-            <div class="question-item"
-                 [ngClass]="{completed: question.is_complete}"
-                 *ngFor="let question of subMenuItem.questions"
-                 routerLink="/answer/{{question.answer_id}}">
-              {{question.display_code + ' ' + question.name}}
+            <div class="collapse-menu-content">
+              <div class="question-item"
+                   [ngClass]="{completed: question.is_complete, selected: question === selectedQuestion}"
+                   *ngFor="let question of subMenuItem.questions"
+                   (click)="selectedQuestion = question"
+                   routerLink="/answer/{{question.answer_id}}">
+                {{question.display_code + ' ' + question.name}}
+              </div>
             </div>
-          </div>
-        </mat-expansion-panel>
-      </mat-accordion>
+          </mat-expansion-panel>
+        </mat-accordion>
+      </div>
       <div *ngSwitchCase="false">
         <div class="collapse-menu-content">
           <div class="question-item"
