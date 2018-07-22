@@ -41,20 +41,33 @@ export class AnswerDetailsComponent implements OnInit, OnDestroy {
   };
 
   ngOnInit() {
-    this.appStateService.fetchAnswer(+this.route.snapshot.paramMap.get('answerId')).subscribe(answer => {
+    this.appStateService.fetchAnswer(+this.route.snapshot.paramMap.get('answerId')).subscribe((answer: any) => {
       console.log('answer', answer);
       this.answer = answer;
-      this.complianceOptionForm.setValue({
-        compliance_option: answer.compliance_option.toString(),
-      });
-      this.observationFrom.setValue({
-        observation: answer.observation
-      });
-      this.checklistItemsForm.setControl('checklist_items', this.buildFormArray(answer.all_checklist_items, answer.checklist_items));
+      if(answer.all_checklist_items && answer.all_checklist_items.length > 0){
+        this.checklistItemsForm.setControl('checklist_items', this.buildFormArray(answer.all_checklist_items, answer.checklist_items));
+      }
+      if(answer.compliance_option){
+        this.complianceOptionForm.setValue({
+          compliance_option: answer.compliance_option.toString(),
+        });
+      }
+      if(answer.observation){
+        this.observationFrom.setValue({
+          observation: answer.observation
+        });
+      }
+
       this.checklistItemsFormSub = this.checklistItemsForm.valueChanges.subscribe(this.onChecklistChange.bind(this));
       this.complianceOptionFormSub = this.complianceOptionForm.valueChanges.subscribe(this.onComplianceOptionChange.bind(this));
       this.observationFromSub = this.observationFrom.valueChanges.debounceTime(1000).subscribe(this.onObservationChange.bind(this));
     })
+  }
+
+  markAsComplete(){
+      this.appStateService.markAnswerAsComplete(this.answer.id).subscribe(response => {
+        console.log('markAnswerAsComplete', response);
+      });
   }
 
   ngOnDestroy(){
@@ -71,23 +84,32 @@ export class AnswerDetailsComponent implements OnInit, OnDestroy {
   }
 
   private onChecklistChange(newValue: {checklist_items: any[]}){
-    let selected = {
+    let newSelected = {
       checklist_items: []
     };
     newValue.checklist_items.forEach((isSelectedItem, index) => {
       if(isSelectedItem){
-        selected.checklist_items.push(this.answer.all_checklist_items[index].id);
+        newSelected.checklist_items.push(this.answer.all_checklist_items[index].id);
       }
     });
-    console.log('onCheckboxChange', selected);
+    console.log('onCheckboxChange', newSelected);
+    this.updateAnswer(newSelected);
   }
 
   private onObservationChange(newValue: {observation: string}){
     console.log('onObservationChange', newValue);
+    this.updateAnswer(newValue);
   }
 
   private onComplianceOptionChange(newValue: {compliance_option: any}){
     newValue.compliance_option = parseInt(newValue.compliance_option, 10);
     console.log('onComplianceOptionChange', newValue);
+    this.updateAnswer(newValue);
+  }
+
+  private updateAnswer(newValue: any){
+    this.appStateService.updateAnswer(this.answer.id, newValue).subscribe(response => {
+      console.log('updateAnswer', response);
+    });
   }
 }

@@ -10,14 +10,7 @@ import {Router} from '@angular/router';
 export class AppComponent {
   constructor(private appStateService: AppStateService, private router: Router) {
     let question = appStateService.getPreSelectedQuestion();
-    let redirectUrl;
-
-    if (question) {
-      redirectUrl = '/answer/' + question.answer_id
-    } else {
-      redirectUrl = '/start-page'
-    }
-
-    this.router.navigateByUrl(redirectUrl);
+    this.router.navigateByUrl('/answer/' + question.answer_id);
+    //TODO open left menu question
   }
 }

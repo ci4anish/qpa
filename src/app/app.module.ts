@@ -17,7 +17,6 @@ import {QuestionsMenuComponent} from './questions-menu/questions-menu.component'
 import {AnswerDetailsComponent} from './answer-details/answer-details.component';
 import {AppRoutingModule} from './app-routing.module';
 import {AppStateService} from './app-state.service';
-import {StartPageComponent} from './start-page/start-page.component';
 import {HttpClientModule} from '@angular/common/http';
 
 @NgModule({
@@ -25,8 +24,7 @@ import {HttpClientModule} from '@angular/common/http';
     AppComponent,
     SubmitToolbarComponent,
     QuestionsMenuComponent,
-    AnswerDetailsComponent,
-    StartPageComponent
+    AnswerDetailsComponent
   ],
   imports: [
     BrowserModule,

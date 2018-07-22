@@ -1,4 +1,9 @@
-<div class="answer-details-wrapper">
+<div class="answer-details-wrapper" *ngIf="answer">
+
+  <div>
+    <button (click)="markAsComplete()">Mark as complete</button>
+  </div>
+
   <div class="title">{{answer.question_code}}</div>
   <div class="question-text">{{answer.question_text}}</div>
   <div class="checklist-items">
