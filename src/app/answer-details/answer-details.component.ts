@@ -1,26 +1,119 @@
-import {Component, OnInit, OnDestroy} from '@angular/core';
+import {Component, OnInit, OnDestroy, ViewChild, ElementRef} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {AppStateService} from '../app-state.service'
 import {FormBuilder, FormGroup} from "@angular/forms"
 import {Subscription} from 'rxjs/index';
 import 'rxjs/add/operator/debounceTime';
 
+export class Tooltip {
+  body: HTMLElement;
+  tooltip: any;
+  private shown: boolean;
+
+  constructor(private attachToElement: HTMLElement, appendToElement: HTMLElement, private tooltipText: string) {
+    this.createBody();
+    appendToElement.appendChild(this.body);
+    this.tooltip = new (<any>window).Popper(attachToElement, this.body, {
+      placement: 'bottom',
+    });
+    this.checkClickOutside = this.checkClickOutside.bind(this);
+  }
+
+  createBody() {
+    let popoverColor = '#4d76c9';
+    this.body = document.createElement('DIV');
+    let triangleWrapper = document.createElement('DIV');
+    let triangleEl = document.createElement('DIV');
+
+    let contentEl = document.createElement('DIV');
+    contentEl.innerText = this.tooltipText;
+    triangleWrapper.style.height = '7px';
+    let triangleWrapperStyles = {
+      display: 'flex',
+      justifyContent: 'center',
+      height: '7px',
+      position: 'relative',
+      bottom: '-1px'
+    };
+    let contentStyles = {
+      color: 'white',
+      background: popoverColor,
+      padding: '30px 10px',
+      borderRadius: '4px',
+      display: 'block',
+      maxWidth: '300px'
+    };
+    let triangleStyles = {
+      width: '0',
+      height: '0',
+      borderStyle: 'solid',
+      borderWidth: '0 7.5px 10px 7.5px',
+      borderColor: `transparent transparent ${popoverColor} transparent`
+    };
+    Object.assign(contentEl.style, contentStyles);
+    Object.assign(triangleEl.style, triangleStyles);
+    Object.assign(triangleWrapper.style, triangleWrapperStyles);
+    triangleWrapper.appendChild(triangleEl);
+    this.body.appendChild(triangleWrapper);
+    this.body.appendChild(contentEl);
+    this.shown = true;
+  }
+
+  show() {
+    this.body.style.display = 'block';
+    this.tooltip.update();
+    this.shown = true;
+    document.addEventListener('click', this.checkClickOutside);
+  }
+
+  hide() {
+    this.body.style.display = 'none';
+    this.shown = false;
+    document.removeEventListener('click', this.checkClickOutside)
+  }
+
+  isShown(): boolean {
+    return this.shown;
+  }
+
+  destroy() {
+    document.removeEventListener('click', this.checkClickOutside)
+  }
+
+  private checkClickOutside(e: MouseEvent) {
+
+    let element = <HTMLElement>e.target;
+
+    while (element.parentElement && element !== (<any>window).body) {
+      if (element === this.attachToElement || element === this.body) {
+        return;
+      }
+
+      element = element.parentElement;
+    }
+
+    this.hide();
+  }
+}
+
 @Component({
   selector: 'app-answer-details',
   templateUrl: './answer-details.component.html',
   styleUrls: ['./answer-details.component.css']
 })
-export class AnswerDetailsComponent implements OnInit, OnDestroy {
 
+export class AnswerDetailsComponent implements OnInit, OnDestroy {
+  @ViewChild('tooltipButton') tooltipButton: ElementRef;
   answer: any;
   checklistItemsForm: FormGroup;
   complianceOptionForm: FormGroup;
   observationFrom: FormGroup;
+  indicatorTooltip: Tooltip;
   private checklistItemsFormSub: Subscription;
   private complianceOptionFormSub: Subscription;
   private observationFromSub: Subscription;
 
-  constructor(private route: ActivatedRoute, private router: Router,
+  constructor(private route: ActivatedRoute, private router: Router, private elementRef: ElementRef,
               private appStateService: AppStateService, private formBuilder: FormBuilder) {
     this.router.routeReuseStrategy.shouldReuseRoute = function () {
       return false;
@@ -42,20 +135,23 @@ export class AnswerDetailsComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.appStateService.fetchAnswer(+this.route.snapshot.paramMap.get('answerId')).subscribe((answer: any) => {
-      console.log('answer', answer);
       this.answer = answer;
-      if(answer.all_checklist_items && answer.all_checklist_items.length > 0){
+      if (answer.all_checklist_items && answer.all_checklist_items.length > 0) {
         this.checklistItemsForm.setControl('checklist_items', this.buildFormArray(answer.all_checklist_items, answer.checklist_items));
       }
-      if(answer.compliance_option){
+      if (answer.compliance_option) {
         this.complianceOptionForm.setValue({
           compliance_option: answer.compliance_option.toString(),
         });
       }
-      if(answer.observation){
+      if (answer.observation) {
         this.observationFrom.setValue({
           observation: answer.observation
         });
+      }
+
+      if (answer.indicator_text) {
+        this.createIndicatorTooltip();
       }
 
       this.checklistItemsFormSub = this.checklistItemsForm.valueChanges.subscribe(this.onChecklistChange.bind(this));
@@ -64,16 +160,21 @@ export class AnswerDetailsComponent implements OnInit, OnDestroy {
     })
   }
 
-  markAsComplete(){
-      this.appStateService.markAnswerAsComplete(this.answer.id).subscribe(response => {
-        console.log('markAnswerAsComplete', response);
-      });
+  markAsComplete() {
+    this.appStateService.markAnswerAsComplete(this.answer.id).subscribe((response: any) => {
+      this.appStateService.setActiveMenuItem(response.next_question_id);
+    });
   }
 
-  ngOnDestroy(){
+  ngOnDestroy() {
     this.checklistItemsFormSub.unsubscribe();
     this.complianceOptionFormSub.unsubscribe();
     this.observationFromSub.unsubscribe();
+    this.indicatorTooltip.destroy();
+  }
+
+  toggleTooltip() {
+    this.indicatorTooltip.isShown() ? this.indicatorTooltip.hide() : this.indicatorTooltip.show();
   }
 
   private buildFormArray(array: any[], selected: any[]) {
@@ -83,33 +184,35 @@ export class AnswerDetailsComponent implements OnInit, OnDestroy {
     return this.formBuilder.array(arr);
   }
 
-  private onChecklistChange(newValue: {checklist_items: any[]}){
+  private onChecklistChange(newValue: { checklist_items: any[] }) {
     let newSelected = {
       checklist_items: []
     };
     newValue.checklist_items.forEach((isSelectedItem, index) => {
-      if(isSelectedItem){
+      if (isSelectedItem) {
         newSelected.checklist_items.push(this.answer.all_checklist_items[index].id);
       }
     });
-    console.log('onCheckboxChange', newSelected);
     this.updateAnswer(newSelected);
   }
 
-  private onObservationChange(newValue: {observation: string}){
-    console.log('onObservationChange', newValue);
+  private onObservationChange(newValue: { observation: string }) {
     this.updateAnswer(newValue);
   }
 
-  private onComplianceOptionChange(newValue: {compliance_option: any}){
+  private onComplianceOptionChange(newValue: { compliance_option: any }) {
     newValue.compliance_option = parseInt(newValue.compliance_option, 10);
-    console.log('onComplianceOptionChange', newValue);
     this.updateAnswer(newValue);
   }
 
-  private updateAnswer(newValue: any){
-    this.appStateService.updateAnswer(this.answer.id, newValue).subscribe(response => {
-      console.log('updateAnswer', response);
-    });
+  private updateAnswer(newValue: any) {
+    this.appStateService.updateAnswer(this.answer.id, newValue);
+  }
+
+  private createIndicatorTooltip() {
+    setTimeout(() => {
+      this.indicatorTooltip = new Tooltip(this.tooltipButton.nativeElement, this.elementRef.nativeElement, this.answer.indicator_text);
+      this.indicatorTooltip.hide();
+    })
   }
 }

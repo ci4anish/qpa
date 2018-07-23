@@ -1,6 +1,6 @@
 <div class="filter-wrapper">
   <mat-form-field class="filter-field">
-    <input matInput type="text" placeholder="Filter" [formControl]="filterFormControl">
+    <input matInput type="text" placeholder="Search" [formControl]="filterFormControl">
     <button class="clear-button"
             mat-button
             *ngIf="filterFormControl.value"
@@ -13,8 +13,9 @@
 </div>
 <mat-accordion displayMode="flat">
   <mat-expansion-panel *ngFor="let menuItem of menu"
-                       (opened)="menuItem.panelOpenState = true"
-                       (closed)="menuItem.panelOpenState = undefined">
+                       [expanded]="menuItem.expanded"
+                       (opened)="menuItem.panelOpenState = true;"
+                       (closed)="menuItem.panelOpenState = undefined;">
     <mat-expansion-panel-header collapsedHeight="60px" expandedHeight="60px"
                                 [ngClass]="{'active-header': menuItem.panelOpenState}">
       <mat-panel-description>
@@ -22,10 +23,11 @@
       </mat-panel-description>
     </mat-expansion-panel-header>
 
-    <div [ngSwitch]="!!menuItem.sub_areas">
+    <div [ngSwitch]="menuItem.sub_areas.length > 0">
       <div *ngSwitchCase="true" class="sub-menu-content">
         <mat-accordion displayMode="flat">
           <mat-expansion-panel *ngFor="let subMenuItem of menuItem.sub_areas"
+                               [expanded]="subMenuItem.expanded"
                                (opened)="subMenuItem.panelOpenState = true"
                                (closed)="subMenuItem.panelOpenState = undefined">
             <mat-expansion-panel-header collapsedHeight="45px" expandedHeight="45px"
@@ -39,9 +41,9 @@
 
             <div class="collapse-menu-content">
               <div class="question-item"
-                   [ngClass]="{completed: question.is_complete, selected: question === selectedQuestion}"
+                   [ngClass]="{completed: question.is_complete, selected: question === getSelectedQuestion()}"
                    *ngFor="let question of subMenuItem.questions"
-                   (click)="selectedQuestion = question"
+                   (click)="setSelectedQuestion(question)"
                    routerLink="/answer/{{question.answer_id}}">
                 {{question.display_code + ' ' + question.name}}
               </div>
@@ -52,7 +54,8 @@
       <div *ngSwitchCase="false">
         <div class="collapse-menu-content">
           <div class="question-item"
-               [ngClass]="{completed: question.is_complete}"
+               (click)="setSelectedQuestion(question)"
+               [ngClass]="{completed: question.is_complete, selected: question === getSelectedQuestion()}"
                *ngFor="let question of menuItem.questions"
                routerLink="/answer/{{question.answer_id}}">
             {{question.display_code + ' ' + question.name}}

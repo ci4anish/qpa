@@ -11,7 +11,6 @@ import 'rxjs/add/operator/debounceTime';
 })
 export class QuestionsMenuComponent implements OnInit, OnDestroy {
   menu: any[];
-  selectedQuestion: any;
   filterFormControl = new FormControl();
   private filterFormControlSub: Subscription;
 
@@ -20,11 +19,21 @@ export class QuestionsMenuComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.menu = this.appStateService.getMenuItems();
+    let questionId = this.appStateService.getPreSelectedQuestionId();
+    this.appStateService.setActiveMenuItem(questionId);
     this.subscribeFilter();
   }
 
   ngOnDestroy() {
     this.unsubscribeFilter();
+  }
+
+  setSelectedQuestion(question){
+    this.appStateService.setSelectedQuestion(question);
+  }
+
+  getSelectedQuestion(){
+    return this.appStateService.getSelectedQuestion();
   }
 
   clearFilter() {

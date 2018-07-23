@@ -32,3 +32,18 @@
 .observation-input{
   height: 150px;
 }
+
+.sub-toolbar {
+  display: flex;
+  margin-bottom: 30px;
+  align-items: center;
+}
+
+.sub-toolbar-title{
+  flex-grow: 1;
+  font-weight: bold;
+}
+
+.buttons .app-button:not(:last-child){
+  margin-right: 10px;
+}
