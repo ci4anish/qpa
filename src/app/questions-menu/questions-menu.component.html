@@ -11,7 +11,7 @@
     </button>
   </mat-form-field>
 </div>
-<mat-accordion displayMode="flat">
+<mat-accordion displayMode="flat" [multi]="filterEnabled">
   <mat-expansion-panel *ngFor="let menuItem of menu"
                        [expanded]="menuItem.expanded"
                        (opened)="menuItem.panelOpenState = true;"
@@ -25,7 +25,7 @@
 
     <div [ngSwitch]="menuItem.sub_areas.length > 0">
       <div *ngSwitchCase="true" class="sub-menu-content">
-        <mat-accordion displayMode="flat">
+        <mat-accordion displayMode="flat" [multi]="filterEnabled">
           <mat-expansion-panel *ngFor="let subMenuItem of menuItem.sub_areas"
                                [expanded]="subMenuItem.expanded"
                                (opened)="subMenuItem.panelOpenState = true"

@@ -12,6 +12,7 @@ import 'rxjs/add/operator/map';
 })
 export class QuestionsMenuComponent implements OnInit, OnDestroy {
   menu: any[];
+  filterEnabled: boolean;
   filterFormControl = new FormControl();
   private filterFormControlSub: Subscription;
 
@@ -47,10 +48,13 @@ export class QuestionsMenuComponent implements OnInit, OnDestroy {
   private applyFilterSearch(filterValue?: string) {
     if (filterValue) {
       this.appStateService.filterLeftMenu(filterValue).subscribe((filteredMenu: any[]) => {
+        this.filterEnabled = true;
         this.menu = filteredMenu;
+        this.appStateService.setActiveMenuItem(this.getSelectedQuestion().id);
         this.cdRef.detectChanges();
       });
     } else {
+      this.filterEnabled = false;
       this.menu = this.appStateService.getMenuItems();
     }
   }

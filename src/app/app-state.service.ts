@@ -63,21 +63,20 @@ export class AppStateService {
   }
 
   filterLeftMenu(filterValue: string) {
-    return this.http.get(`https://qpa.codesource.com.au/practice/assessment/${this.assessmentCode}/questions/?q=${filterValue}`);
-    //TODO expand all of the items
-      // .map(filteredMenu => {
-      //   filteredMenu.forEach(item => {
-      //     item.expanded = true;
-      //
-      //     if(item.sub_areas.length > 0){
-      //       item.sub_areas.forEach(subArea => {
-      //         subArea.expanded = true;
-      //       });
-      //     }
-      //   });
-      //
-      //   return filteredMenu;
-      // });
+    return this.http.get(`https://qpa.codesource.com.au/practice/assessment/${this.assessmentCode}/questions/?q=${filterValue}`)
+      .map((filteredMenu: any[]) => {
+        filteredMenu.forEach(item => {
+          item.expanded = true;
+
+          if(item.sub_areas.length > 0){
+            item.sub_areas.forEach(subArea => {
+              subArea.expanded = true;
+            });
+          }
+        });
+
+        return filteredMenu;
+      });
   }
 
   selectLeftMenuQuestion(selected) {
