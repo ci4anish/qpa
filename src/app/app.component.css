@@ -1,5 +1,6 @@
 .questionnaire-container{
   display: flex;
+  flex-grow: 1;
 }
 
 .left-menu{
@@ -9,4 +10,15 @@
 
 .content-wrapper{
   flex-grow: 1;
+}
+
+.left-menu,
+.content-wrapper{
+  overflow: scroll;
+}
+
+:host{
+  height: 100%;
+  display: flex;
+  width: 100%;
 }
