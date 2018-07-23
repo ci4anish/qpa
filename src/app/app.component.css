@@ -4,6 +4,7 @@
 
 .left-menu{
   width: 400px;
+  min-width: 400px;
 }
 
 .content-wrapper{
