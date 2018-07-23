@@ -6,7 +6,7 @@ import {Router} from '@angular/router';
   providedIn: 'root'
 })
 export class AppStateService {
-
+  private submit_url: string;
   private menu;
   private selectedQuestion;
   private assessmentCode: string;
@@ -19,6 +19,11 @@ export class AppStateService {
     this.assessmentCode = (<any>window).assessment_code;
     this.questions_complete = (<any>window).num_questions_complete;
     this.questions_remaining = (<any>window).num_questions_remaining;
+    this.submit_url = (<any>window).submit_url;
+  }
+
+  getSubmitUrl(): string {
+    return this.submit_url;
   }
 
   getCompleteQuestionsCount(): number {

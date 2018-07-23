@@ -10,5 +10,5 @@
   </div>
 </div>
 <div class="submit-btn-wrapper">
-  <a href="#" class="app-button">Submit</a>
+  <a href="{{submit_url}}" class="app-button" [ngClass]="{disabled: !appStateService.canSubmitQuestionnaire()}">Submit</a>
 </div>

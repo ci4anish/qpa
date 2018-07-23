@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {AppStateService} from '../app-state.service';
 
 @Component({
@@ -7,12 +7,13 @@ import {AppStateService} from '../app-state.service';
   styleUrls: ['./submit-toolbar.component.css']
 })
 export class SubmitToolbarComponent implements OnInit {
-  questions_complete: number;
-  questions_remaining: number;
+  submit_url: string;
 
-  constructor(public appStateService: AppStateService) { }
+  constructor(public appStateService: AppStateService) {
+  }
 
   ngOnInit() {
+    this.submit_url = this.appStateService.getSubmitUrl();
   }
 
 }
