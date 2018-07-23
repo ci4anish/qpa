@@ -206,7 +206,7 @@ export class AnswerDetailsComponent implements OnInit, OnDestroy {
   }
 
   private updateAnswer(newValue: any) {
-    this.appStateService.updateAnswer(this.answer.id, newValue);
+    this.appStateService.updateAnswer(this.answer.id, newValue).subscribe();
   }
 
   private createIndicatorTooltip() {
