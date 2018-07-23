@@ -2063,12 +2063,13 @@
   var pdv_id = 2;
   var current_question_id = 16;
   var assessment_id = 1;
-  var answer_set_url = '/api/web.protocoldocumentanswerset'; // Do a GET: to fetch the right hand side content for a question selected from the left sidebar. Do a PUT when a user clicks on a checkbox, radio button, or types into the textbox, a PUT needs to be made and the response will be all the "selected" checkboxes, if any, and the radio button selected, and the text
+  var answer_set_url = 'https://qpa.codesource.com.au/api/web.protocoldocumentanswerset/'; // Do a GET: to fetch the right hand side content for a question selected from the left sidebar. Do a PUT when a user clicks on a checkbox, radio button, or types into the textbox, a PUT needs to be made and the response will be all the "selected" checkboxes, if any, and the radio button selected, and the text
   var mark_complete_subroute = "mark_complete"; // When a user clicks Mark as Complete (button on the right side)
   var search_url = "blah/?q=search-term"; // Will return a list of questions matching, needs to filter the left sidebar and only show matching questions, retaining the subheader and header for that question
   var num_questions_complete = 5;
   var num_questions_remaining = 300;
   var assessment_code = '1ff3685c70ad48bf9e4d1271b3d9fc6b';
+  var questions_search_url = 'https://qpa.codesource.com.au/practice/assessment/fba317483fda43cab8047675e9aec974/questions';
 </script>
 </body>
 </html>

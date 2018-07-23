@@ -12,14 +12,17 @@ export class AppStateService {
   private assessmentCode: string;
   private questions_complete: number;
   private questions_remaining: number;
-  private endpointUrl: string = 'https://qpa.codesource.com.au/api/web.protocoldocumentanswerset/';
+  private endpointUrl: string;
+  private questions_search_url: string;
 
   constructor(private http: HttpClient, private router: Router) {
+    this.endpointUrl = (<any>window).answer_set_url;
     this.menu = (<any>window).sidebar_json.slice();
     this.assessmentCode = (<any>window).assessment_code;
     this.questions_complete = (<any>window).num_questions_complete;
     this.questions_remaining = (<any>window).num_questions_remaining;
     this.submit_url = (<any>window).submit_url;
+    this.questions_search_url = (<any>window).questions_search_url;
   }
 
   getSubmitUrl(): string {
@@ -63,7 +66,7 @@ export class AppStateService {
   }
 
   filterLeftMenu(filterValue: string) {
-    return this.http.get(`https://qpa.codesource.com.au/practice/assessment/${this.assessmentCode}/questions/?q=${filterValue}`);
+    return this.http.get(`${this.questions_search_url}/?q=${filterValue}`);
     //TODO expand all of the items
       // .map(filteredMenu => {
       //   filteredMenu.forEach(item => {
