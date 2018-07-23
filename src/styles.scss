@@ -30,3 +30,27 @@ body{
   cursor: pointer;
   outline: 0;
 }
+
+.indicator-popup {
+  color: white;
+  background: rgb(77, 118, 201);
+  padding: 30px 10px;
+  border-radius: 4px;
+  display: block;
+  max-width: 300px;
+}
+
+.indicator-popup-triangle{
+  width: 0px;
+  height: 0px;
+  border-style: solid;
+  border-width: 0px 7.5px 10px;
+  border-color: transparent transparent rgb(77, 118, 201);
+}
+
+.indicator-popup-triangle-wrapper{
+  display: flex;
+  height: 7px;
+  position: relative;
+  bottom: -1px;
+}

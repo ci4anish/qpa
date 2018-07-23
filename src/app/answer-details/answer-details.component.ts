@@ -27,32 +27,10 @@ export class Tooltip {
 
     let contentEl = document.createElement('DIV');
     contentEl.innerText = this.tooltipText;
-    triangleWrapper.style.height = '7px';
-    let triangleWrapperStyles = {
-      display: 'flex',
-      justifyContent: this.placement === 'bottom' ? 'center' : 'flex-end',
-      height: '7px',
-      position: 'relative',
-      bottom: '-1px'
-    };
-    let contentStyles = {
-      color: 'white',
-      background: popoverColor,
-      padding: '30px 10px',
-      borderRadius: '4px',
-      display: 'block',
-      maxWidth: '300px'
-    };
-    let triangleStyles = {
-      width: '0',
-      height: '0',
-      borderStyle: 'solid',
-      borderWidth: '0 7.5px 10px 7.5px',
-      borderColor: `transparent transparent ${popoverColor} transparent`
-    };
-    Object.assign(contentEl.style, contentStyles);
-    Object.assign(triangleEl.style, triangleStyles);
-    Object.assign(triangleWrapper.style, triangleWrapperStyles);
+    triangleWrapper.style.justifyContent = this.placement === 'bottom' ? 'center' : 'flex-end';
+    contentEl.classList.add('indicator-popup');
+    triangleEl.classList.add('indicator-popup-triangle');
+    triangleWrapper.classList.add('indicator-popup-triangle-wrapper');
     triangleWrapper.appendChild(triangleEl);
     this.body.appendChild(triangleWrapper);
     this.body.appendChild(contentEl);
