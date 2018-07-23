@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {AppStateService} from '../app-state.service';
 
 @Component({
   selector: 'app-submit-toolbar',
@@ -9,11 +10,9 @@ export class SubmitToolbarComponent implements OnInit {
   questions_complete: number;
   questions_remaining: number;
 
-  constructor() { }
+  constructor(public appStateService: AppStateService) { }
 
   ngOnInit() {
-    this.questions_complete = (<any>window).num_questions_complete;
-    this.questions_remaining = (<any>window).num_questions_remaining;
   }
 
 }

@@ -10,11 +10,35 @@ export class AppStateService {
   private menu;
   private selectedQuestion;
   private assessmentCode: string;
+  private questions_complete: number;
+  private questions_remaining: number;
   private endpointUrl: string = 'https://qpa.codesource.com.au/api/web.protocoldocumentanswerset/';
 
   constructor(private http: HttpClient, private router: Router) {
     this.menu = (<any>window).sidebar_json.slice();
     this.assessmentCode = (<any>window).assessment_code;
+    this.questions_complete = (<any>window).num_questions_complete;
+    this.questions_remaining = (<any>window).num_questions_remaining;
+  }
+
+  getCompleteQuestionsCount(): number {
+    return this.questions_complete;
+  }
+
+  getRemainingQuestionsCount(): number {
+    return this.questions_remaining;
+  }
+
+  setCompleteQuestionsCount(questions_complete) {
+     this.questions_complete = questions_complete;
+  }
+
+  setRemainingQuestionsCount(questions_remaining) {
+    this.questions_remaining = questions_remaining;
+  }
+
+  canSubmitQuestionnaire(): boolean {
+    return this.questions_remaining === 0;
   }
 
   getMenuItems(): any[] {
@@ -23,16 +47,6 @@ export class AppStateService {
 
   getPreSelectedQuestionId(): number {
     return (<any>window).current_question_id;
-  }
-
-  getPreSelectedMenuItem() {
-    const lastEditedId = (<any>window).current_question_id;
-
-    if (!lastEditedId) {
-      return undefined;
-    }
-
-    return this.getQuestionById(lastEditedId);
   }
 
   getSelectedQuestion() {
@@ -45,6 +59,20 @@ export class AppStateService {
 
   filterLeftMenu(filterValue: string) {
     return this.http.get(`https://qpa.codesource.com.au/practice/assessment/${this.assessmentCode}/questions/?q=${filterValue}`);
+    //TODO expand all of the items
+      // .map(filteredMenu => {
+      //   filteredMenu.forEach(item => {
+      //     item.expanded = true;
+      //
+      //     if(item.sub_areas.length > 0){
+      //       item.sub_areas.forEach(subArea => {
+      //         subArea.expanded = true;
+      //       });
+      //     }
+      //   });
+      //
+      //   return filteredMenu;
+      // });
   }
 
   selectLeftMenuQuestion(selected) {
@@ -55,11 +83,11 @@ export class AppStateService {
   }
 
   fetchAnswer(answerId: number) {
-    return this.http.get(this.endpointUrl + answerId);
+    return this.http.get(this.endpointUrl + answerId + '/');
   }
 
   updateAnswer(answerId: number, newValue: any) {
-    return this.http.patch(this.endpointUrl + answerId, newValue);
+    return this.http.patch(this.endpointUrl + answerId + '/', newValue);
   }
 
   markAnswerAsComplete(answerId: number) {

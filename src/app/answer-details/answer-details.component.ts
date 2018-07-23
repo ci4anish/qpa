@@ -10,11 +10,11 @@ export class Tooltip {
   tooltip: any;
   private shown: boolean;
 
-  constructor(private attachToElement: HTMLElement, appendToElement: HTMLElement, private tooltipText: string) {
+  constructor(private attachToElement: HTMLElement, appendToElement: HTMLElement, private tooltipText: string, private placement: string) {
     this.createBody();
     appendToElement.appendChild(this.body);
     this.tooltip = new (<any>window).Popper(attachToElement, this.body, {
-      placement: 'bottom',
+      placement: this.placement,
     });
     this.checkClickOutside = this.checkClickOutside.bind(this);
   }
@@ -30,7 +30,7 @@ export class Tooltip {
     triangleWrapper.style.height = '7px';
     let triangleWrapperStyles = {
       display: 'flex',
-      justifyContent: 'center',
+      justifyContent: this.placement === 'bottom' ? 'center' : 'flex-end',
       height: '7px',
       position: 'relative',
       bottom: '-1px'
@@ -163,6 +163,10 @@ export class AnswerDetailsComponent implements OnInit, OnDestroy {
   markAsComplete() {
     this.appStateService.markAnswerAsComplete(this.answer.id).subscribe((response: any) => {
       this.appStateService.setActiveMenuItem(response.next_question_id);
+      this.appStateService.setCompleteQuestionsCount(response.num_complete);
+      this.appStateService.setRemainingQuestionsCount(response.num_remaining);
+      let {question} = this.appStateService.getQuestionById(this.answer.question);
+      question.is_complete = true;
     });
   }
 
@@ -211,7 +215,8 @@ export class AnswerDetailsComponent implements OnInit, OnDestroy {
 
   private createIndicatorTooltip() {
     setTimeout(() => {
-      this.indicatorTooltip = new Tooltip(this.tooltipButton.nativeElement, this.elementRef.nativeElement, this.answer.indicator_text);
+      this.indicatorTooltip = new Tooltip(this.tooltipButton.nativeElement, this.elementRef.nativeElement,
+        this.answer.indicator_text, !this.answer.is_complete ? 'bottom' : 'bottom-end');
       this.indicatorTooltip.hide();
     })
   }

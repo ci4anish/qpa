@@ -1,8 +1,9 @@
-import {Component, OnInit, OnDestroy} from '@angular/core';
+import {Component, OnInit, OnDestroy, ChangeDetectorRef} from '@angular/core';
 import {AppStateService} from '../app-state.service';
 import {FormControl} from '@angular/forms';
 import {Subscription} from 'rxjs/index';
 import 'rxjs/add/operator/debounceTime';
+import 'rxjs/add/operator/map';
 
 @Component({
   selector: 'app-questions-menu',
@@ -14,7 +15,7 @@ export class QuestionsMenuComponent implements OnInit, OnDestroy {
   filterFormControl = new FormControl();
   private filterFormControlSub: Subscription;
 
-  constructor(private appStateService: AppStateService) {
+  constructor(private appStateService: AppStateService, private cdRef:ChangeDetectorRef) {
   }
 
   ngOnInit() {
@@ -47,6 +48,7 @@ export class QuestionsMenuComponent implements OnInit, OnDestroy {
     if (filterValue) {
       this.appStateService.filterLeftMenu(filterValue).subscribe((filteredMenu: any[]) => {
         this.menu = filteredMenu;
+        this.cdRef.detectChanges();
       });
     } else {
       this.menu = this.appStateService.getMenuItems();
