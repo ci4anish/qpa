@@ -35,7 +35,7 @@ export class AppStateService {
   }
 
   setCompleteQuestionsCount(questions_complete) {
-     this.questions_complete = questions_complete;
+    this.questions_complete = questions_complete;
   }
 
   setRemainingQuestionsCount(questions_remaining) {
@@ -68,7 +68,7 @@ export class AppStateService {
         filteredMenu.forEach(item => {
           item.expanded = true;
 
-          if(item.sub_areas.length > 0){
+          if (item.sub_areas.length > 0) {
             item.sub_areas.forEach(subArea => {
               subArea.expanded = true;
             });

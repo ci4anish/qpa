@@ -16,7 +16,7 @@ export class QuestionsMenuComponent implements OnInit, OnDestroy {
   filterFormControl = new FormControl();
   private filterFormControlSub: Subscription;
 
-  constructor(private appStateService: AppStateService, private cdRef:ChangeDetectorRef) {
+  constructor(private appStateService: AppStateService, private cdRef: ChangeDetectorRef) {
   }
 
   ngOnInit() {
@@ -26,15 +26,19 @@ export class QuestionsMenuComponent implements OnInit, OnDestroy {
     this.subscribeFilter();
   }
 
+  preventCollapse(e: MouseEvent){
+    e.stopPropagation();
+  }
+
   ngOnDestroy() {
     this.unsubscribeFilter();
   }
 
-  setSelectedQuestion(question){
+  setSelectedQuestion(question) {
     this.appStateService.setSelectedQuestion(question);
   }
 
-  getSelectedQuestion(){
+  getSelectedQuestion() {
     return this.appStateService.getSelectedQuestion();
   }
 

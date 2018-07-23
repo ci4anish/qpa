@@ -20,25 +20,6 @@ export class Tooltip {
     });
   }
 
-  createBody() {
-    this.body = document.createElement('DIV');
-    this.body.addEventListener('animationend', this.transitionEnd);
-    this.body.style.display = 'none';
-    let triangleWrapper = document.createElement('DIV');
-    let triangleEl = document.createElement('DIV');
-
-    let contentEl = document.createElement('DIV');
-    contentEl.innerText = this.tooltipText;
-    triangleWrapper.style.justifyContent = this.placement === 'bottom' ? 'center' : 'flex-end';
-    contentEl.classList.add('indicator-popup');
-    triangleEl.classList.add('indicator-popup-triangle');
-    triangleWrapper.classList.add('indicator-popup-triangle-wrapper');
-    triangleWrapper.appendChild(triangleEl);
-    this.body.appendChild(triangleWrapper);
-    this.body.appendChild(contentEl);
-    this.shown = false;
-  }
-
   show() {
     this.body.style.display = 'block';
     this.body.style.animation = 'showPopover .3s 1';
@@ -60,6 +41,25 @@ export class Tooltip {
   destroy() {
     document.removeEventListener('click', this.checkClickOutside);
     this.body.removeEventListener('animationend', this.transitionEnd);
+  }
+
+  private createBody() {
+    this.body = document.createElement('DIV');
+    this.body.addEventListener('animationend', this.transitionEnd);
+    this.body.style.display = 'none';
+    let triangleWrapper = document.createElement('DIV');
+    let triangleEl = document.createElement('DIV');
+
+    let contentEl = document.createElement('DIV');
+    contentEl.innerText = this.tooltipText;
+    triangleWrapper.style.justifyContent = this.placement === 'bottom' ? 'center' : 'flex-end';
+    contentEl.classList.add('indicator-popup');
+    triangleEl.classList.add('indicator-popup-triangle');
+    triangleWrapper.classList.add('indicator-popup-triangle-wrapper');
+    triangleWrapper.appendChild(triangleEl);
+    this.body.appendChild(triangleWrapper);
+    this.body.appendChild(contentEl);
+    this.shown = false;
   }
 
   private transitionEnd() {
@@ -103,7 +103,7 @@ export class AnswerDetailsComponent implements OnInit, OnDestroy {
               private appStateService: AppStateService, private formBuilder: FormBuilder) {
     this.router.routeReuseStrategy.shouldReuseRoute = function () {
       return false;
-    }
+    };
     this.checklistItemsForm = this.formBuilder.group({
       checklist_items: this.buildFormArray([], [])
     });
