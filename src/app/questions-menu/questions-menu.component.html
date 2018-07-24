@@ -10,30 +10,33 @@
       x
     </button>
   </mat-form-field>
+  <button class="toggle-collapse-button" (click)="toggleCollapse()">
+    <span class="mat-expansion-indicator" [ngClass]="{expanded: expandedMode}"></span>
+  </button>
 </div>
 
 <div class="accordion-wrapper">
-  <mat-accordion displayMode="flat" [multi]="filterEnabled">
+  <mat-accordion displayMode="flat" [multi]="expandedMode">
     <mat-expansion-panel *ngFor="let menuItem of menu"
                          [expanded]="menuItem.expanded"
-                         (opened)="menuItem.panelOpenState = true;"
-                         (closed)="menuItem.panelOpenState = undefined;">
+                         (opened)="menuItem.expanded = true;"
+                         (closed)="menuItem.expanded = false;">
       <mat-expansion-panel-header collapsedHeight="60px" expandedHeight="60px"
-                                  [ngClass]="{'active-header': menuItem.panelOpenState}">
+                                  [ngClass]="{'active-header': menuItem.expanded}">
         <mat-panel-description>
-          <div [ngClass]="{'active-item': menuItem.panelOpenState}">{{menuItem.name | uppercase}}</div>
+          <div [ngClass]="{'active-item': menuItem.expanded}">{{menuItem.name | uppercase}}</div>
         </mat-panel-description>
       </mat-expansion-panel-header>
 
       <div [ngSwitch]="menuItem.sub_areas.length > 0">
         <div *ngSwitchCase="true" class="sub-menu-content">
-          <mat-accordion displayMode="flat" [multi]="filterEnabled">
+          <mat-accordion displayMode="flat" [multi]="expandedMode">
             <mat-expansion-panel *ngFor="let subMenuItem of menuItem.sub_areas"
                                  [expanded]="subMenuItem.expanded"
-                                 (opened)="subMenuItem.panelOpenState = true"
-                                 (closed)="subMenuItem.panelOpenState = undefined">
+                                 (opened)="subMenuItem.expanded = true"
+                                 (closed)="subMenuItem.expanded = false">
               <mat-expansion-panel-header collapsedHeight="45px" expandedHeight="45px"
-                                          [ngClass]="{'active-header': subMenuItem.panelOpenState}">
+                                          [ngClass]="{'active-header': subMenuItem.expanded}">
                 <mat-panel-description>
                   <div>
                     {{subMenuItem.name}}

@@ -65,21 +65,25 @@ export class AppStateService {
     this.selectedQuestion = selectedQuestion;
   }
 
-  filterLeftMenu(filterValue: string) {
+  filterQuestionsMenu(filterValue: string) {
     return this.http.get(`${this.questions_search_url}/?q=${filterValue}`)
       .map((filteredMenu: any[]) => {
-        filteredMenu.forEach(item => {
-          item.expanded = true;
-
-          if (item.sub_areas.length > 0) {
-            item.sub_areas.forEach(subArea => {
-              subArea.expanded = true;
-            });
-          }
-        });
-
-        return filteredMenu;
+        return this.expandQuestionsMenu(filteredMenu, true);
       });
+  }
+
+  expandQuestionsMenu(filteredMenu: any[], expend: boolean){
+    filteredMenu.forEach(item => {
+      item.expanded = expend;
+
+      if (item.sub_areas.length > 0) {
+        item.sub_areas.forEach(subArea => {
+          subArea.expanded = expend;
+        });
+      }
+    });
+
+    return filteredMenu;
   }
 
   selectLeftMenuQuestion(selected) {

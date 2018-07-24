@@ -12,7 +12,7 @@ import 'rxjs/add/operator/map';
 })
 export class QuestionsMenuComponent implements OnInit, OnDestroy {
   menu: any[];
-  filterEnabled: boolean;
+  expandedMode: boolean = false;
   filterFormControl = new FormControl();
   private filterFormControlSub: Subscription;
 
@@ -26,7 +26,7 @@ export class QuestionsMenuComponent implements OnInit, OnDestroy {
     this.subscribeFilter();
   }
 
-  preventCollapse(e: MouseEvent){
+  preventCollapse(e: MouseEvent) {
     e.stopPropagation();
   }
 
@@ -42,6 +42,18 @@ export class QuestionsMenuComponent implements OnInit, OnDestroy {
     return this.appStateService.getSelectedQuestion();
   }
 
+  toggleCollapse() {
+    if (!this.expandedMode) {
+      this.expandedMode = true;
+      this.appStateService.expandQuestionsMenu(this.menu, true);
+    } else {
+      this.expandedMode = false;
+      this.appStateService.expandQuestionsMenu(this.menu, false);
+      this.appStateService.selectLeftMenuQuestion(this.appStateService.getQuestionById(this.getSelectedQuestion().id));
+    }
+    this.cdRef.detectChanges();
+  }
+
   clearFilter() {
     this.unsubscribeFilter();
     this.filterFormControl.setValue('');
@@ -51,14 +63,14 @@ export class QuestionsMenuComponent implements OnInit, OnDestroy {
 
   private applyFilterSearch(filterValue?: string) {
     if (filterValue) {
-      this.appStateService.filterLeftMenu(filterValue).subscribe((filteredMenu: any[]) => {
-        this.filterEnabled = true;
+      this.appStateService.filterQuestionsMenu(filterValue).subscribe((filteredMenu: any[]) => {
+        this.expandedMode = true;
         this.menu = filteredMenu;
         this.appStateService.setActiveMenuItem(this.getSelectedQuestion().id);
         this.cdRef.detectChanges();
       });
     } else {
-      this.filterEnabled = false;
+      this.expandedMode = false;
       this.menu = this.appStateService.getMenuItems();
     }
   }
