@@ -1,74 +1,70 @@
-<mat-accordion displayMode="flat">
-  <mat-expansion-panel [expanded]="true">
-    <mat-expansion-panel-header collapsedHeight="70px" expandedHeight="70px">
-      <div class="filter-wrapper" (click)="preventCollapse($event)">
-        <mat-form-field class="filter-field">
-          <input matInput type="text" placeholder="Search" [formControl]="filterFormControl">
-          <button class="clear-button"
-                  mat-button
-                  *ngIf="filterFormControl.value"
-                  matSuffix
-                  mat-icon-button
-                  aria-label="Clear" (click)="clearFilter()">
-            x
-          </button>
-        </mat-form-field>
-      </div>
-    </mat-expansion-panel-header>
+<div class="filter-wrapper" (click)="preventCollapse($event)">
+  <mat-form-field class="filter-field">
+    <input matInput type="text" placeholder="Search" [formControl]="filterFormControl">
+    <button class="clear-button"
+            mat-button
+            *ngIf="filterFormControl.value"
+            matSuffix
+            mat-icon-button
+            aria-label="Clear" (click)="clearFilter()">
+      x
+    </button>
+  </mat-form-field>
+</div>
 
-    <mat-accordion displayMode="flat" [multi]="filterEnabled">
-      <mat-expansion-panel *ngFor="let menuItem of menu"
-                           [expanded]="menuItem.expanded"
-                           (opened)="menuItem.panelOpenState = true;"
-                           (closed)="menuItem.panelOpenState = undefined;">
-        <mat-expansion-panel-header collapsedHeight="60px" expandedHeight="60px"
-                                    [ngClass]="{'active-header': menuItem.panelOpenState}">
-          <mat-panel-description>
-            <div [ngClass]="{'active-item': menuItem.panelOpenState}">{{menuItem.name | uppercase}}</div>
-          </mat-panel-description>
-        </mat-expansion-panel-header>
+<div class="accordion-wrapper">
+  <mat-accordion displayMode="flat" [multi]="filterEnabled">
+    <mat-expansion-panel *ngFor="let menuItem of menu"
+                         [expanded]="menuItem.expanded"
+                         (opened)="menuItem.panelOpenState = true;"
+                         (closed)="menuItem.panelOpenState = undefined;">
+      <mat-expansion-panel-header collapsedHeight="60px" expandedHeight="60px"
+                                  [ngClass]="{'active-header': menuItem.panelOpenState}">
+        <mat-panel-description>
+          <div [ngClass]="{'active-item': menuItem.panelOpenState}">{{menuItem.name | uppercase}}</div>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
 
-        <div [ngSwitch]="menuItem.sub_areas.length > 0">
-          <div *ngSwitchCase="true" class="sub-menu-content">
-            <mat-accordion displayMode="flat" [multi]="filterEnabled">
-              <mat-expansion-panel *ngFor="let subMenuItem of menuItem.sub_areas"
-                                   [expanded]="subMenuItem.expanded"
-                                   (opened)="subMenuItem.panelOpenState = true"
-                                   (closed)="subMenuItem.panelOpenState = undefined">
-                <mat-expansion-panel-header collapsedHeight="45px" expandedHeight="45px"
-                                            [ngClass]="{'active-header': subMenuItem.panelOpenState}">
-                  <mat-panel-description>
-                    <div>
-                      {{subMenuItem.name}}
-                    </div>
-                  </mat-panel-description>
-                </mat-expansion-panel-header>
-
-                <div class="collapse-menu-content">
-                  <div class="question-item"
-                       [ngClass]="{completed: question.is_complete, selected: question === getSelectedQuestion()}"
-                       *ngFor="let question of subMenuItem.questions"
-                       (click)="setSelectedQuestion(question)"
-                       routerLink="/answer/{{question.answer_id}}">
-                    {{question.display_code + ' ' + question.name}}
+      <div [ngSwitch]="menuItem.sub_areas.length > 0">
+        <div *ngSwitchCase="true" class="sub-menu-content">
+          <mat-accordion displayMode="flat" [multi]="filterEnabled">
+            <mat-expansion-panel *ngFor="let subMenuItem of menuItem.sub_areas"
+                                 [expanded]="subMenuItem.expanded"
+                                 (opened)="subMenuItem.panelOpenState = true"
+                                 (closed)="subMenuItem.panelOpenState = undefined">
+              <mat-expansion-panel-header collapsedHeight="45px" expandedHeight="45px"
+                                          [ngClass]="{'active-header': subMenuItem.panelOpenState}">
+                <mat-panel-description>
+                  <div>
+                    {{subMenuItem.name}}
                   </div>
+                </mat-panel-description>
+              </mat-expansion-panel-header>
+
+              <div class="collapse-menu-content">
+                <div class="question-item"
+                     [ngClass]="{completed: question.is_complete, selected: question === getSelectedQuestion()}"
+                     *ngFor="let question of subMenuItem.questions"
+                     (click)="setSelectedQuestion(question)"
+                     routerLink="/answer/{{question.answer_id}}">
+                  {{question.display_code + ' ' + question.name}}
                 </div>
-              </mat-expansion-panel>
-            </mat-accordion>
-          </div>
-          <div *ngSwitchCase="false">
-            <div class="collapse-menu-content">
-              <div class="question-item"
-                   (click)="setSelectedQuestion(question)"
-                   [ngClass]="{completed: question.is_complete, selected: question === getSelectedQuestion()}"
-                   *ngFor="let question of menuItem.questions"
-                   routerLink="/answer/{{question.answer_id}}">
-                {{question.display_code + ' ' + question.name}}
               </div>
+            </mat-expansion-panel>
+          </mat-accordion>
+        </div>
+        <div *ngSwitchCase="false">
+          <div class="collapse-menu-content">
+            <div class="question-item"
+                 (click)="setSelectedQuestion(question)"
+                 [ngClass]="{completed: question.is_complete, selected: question === getSelectedQuestion()}"
+                 *ngFor="let question of menuItem.questions"
+                 routerLink="/answer/{{question.answer_id}}">
+              {{question.display_code + ' ' + question.name}}
             </div>
           </div>
         </div>
-      </mat-expansion-panel>
-    </mat-accordion>
-  </mat-expansion-panel>
-</mat-accordion>
+      </div>
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>

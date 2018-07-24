@@ -10,15 +10,18 @@
 
 .content-wrapper{
   flex-grow: 1;
-}
-
-.left-menu,
-.content-wrapper{
-  overflow: scroll;
+  display: flex;
+  flex-direction: column;
 }
 
 :host{
   height: 100%;
   display: flex;
   width: 100%;
+}
+
+.scrollable-content{
+
+  height: calc(100% - 55px);
+  overflow: scroll;
 }

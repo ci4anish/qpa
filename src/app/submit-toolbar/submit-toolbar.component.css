@@ -2,6 +2,7 @@
   display: flex;
   height: 55px;
   background: #ebf1f5;
+  flex-shrink: 0;
 }
 
 .header{
