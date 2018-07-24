@@ -12,10 +12,11 @@ import 'rxjs/add/operator/map';
 })
 export class QuestionsMenuComponent implements OnInit, OnDestroy {
   menu: any[];
+  filterEnabled: boolean;
   filterFormControl = new FormControl();
   private filterFormControlSub: Subscription;
 
-  constructor(private appStateService: AppStateService, private cdRef:ChangeDetectorRef) {
+  constructor(private appStateService: AppStateService, private cdRef: ChangeDetectorRef) {
   }
 
   ngOnInit() {
@@ -25,15 +26,19 @@ export class QuestionsMenuComponent implements OnInit, OnDestroy {
     this.subscribeFilter();
   }
 
+  preventCollapse(e: MouseEvent){
+    e.stopPropagation();
+  }
+
   ngOnDestroy() {
     this.unsubscribeFilter();
   }
 
-  setSelectedQuestion(question){
+  setSelectedQuestion(question) {
     this.appStateService.setSelectedQuestion(question);
   }
 
-  getSelectedQuestion(){
+  getSelectedQuestion() {
     return this.appStateService.getSelectedQuestion();
   }
 
@@ -47,10 +52,13 @@ export class QuestionsMenuComponent implements OnInit, OnDestroy {
   private applyFilterSearch(filterValue?: string) {
     if (filterValue) {
       this.appStateService.filterLeftMenu(filterValue).subscribe((filteredMenu: any[]) => {
+        this.filterEnabled = true;
         this.menu = filteredMenu;
+        this.appStateService.setActiveMenuItem(this.getSelectedQuestion().id);
         this.cdRef.detectChanges();
       });
     } else {
+      this.filterEnabled = false;
       this.menu = this.appStateService.getMenuItems();
     }
   }

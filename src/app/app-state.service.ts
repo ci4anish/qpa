@@ -38,7 +38,7 @@ export class AppStateService {
   }
 
   setCompleteQuestionsCount(questions_complete) {
-     this.questions_complete = questions_complete;
+    this.questions_complete = questions_complete;
   }
 
   setRemainingQuestionsCount(questions_remaining) {
@@ -66,21 +66,20 @@ export class AppStateService {
   }
 
   filterLeftMenu(filterValue: string) {
-    return this.http.get(`${this.questions_search_url}/?q=${filterValue}`);
-    //TODO expand all of the items
-      // .map(filteredMenu => {
-      //   filteredMenu.forEach(item => {
-      //     item.expanded = true;
-      //
-      //     if(item.sub_areas.length > 0){
-      //       item.sub_areas.forEach(subArea => {
-      //         subArea.expanded = true;
-      //       });
-      //     }
-      //   });
-      //
-      //   return filteredMenu;
-      // });
+    return this.http.get(`${this.questions_search_url}/?q=${filterValue}`)
+      .map((filteredMenu: any[]) => {
+        filteredMenu.forEach(item => {
+          item.expanded = true;
+
+          if (item.sub_areas.length > 0) {
+            item.sub_areas.forEach(subArea => {
+              subArea.expanded = true;
+            });
+          }
+        });
+
+        return filteredMenu;
+      });
   }
 
   selectLeftMenuQuestion(selected) {

@@ -51,6 +51,31 @@ body{
 .indicator-popup-triangle-wrapper{
   display: flex;
   height: 7px;
+  padding: 0 5px;
   position: relative;
   bottom: -1px;
+}
+
+/* Safari 4.0 - 8.0 */
+@-webkit-keyframes showPopover {
+  from {opacity: 0;}
+  to {opacity: 1;}
+}
+
+/* Standard syntax */
+@keyframes showPopover {
+  from {opacity: 0;}
+  to {opacity: 1;}
+}
+
+/* Safari 4.0 - 8.0 */
+@-webkit-keyframes hidePopover {
+  from {opacity: 1;}
+  to {opacity: 0;}
+}
+
+/* Standard syntax */
+@keyframes hidePopover {
+  from {opacity: 1;}
+  to {opacity: 0;}
 }

@@ -11,17 +11,42 @@ export class Tooltip {
   private shown: boolean;
 
   constructor(private attachToElement: HTMLElement, appendToElement: HTMLElement, private tooltipText: string, private placement: string) {
+    this.checkClickOutside = this.checkClickOutside.bind(this);
+    this.transitionEnd = this.transitionEnd.bind(this);
     this.createBody();
     appendToElement.appendChild(this.body);
     this.tooltip = new (<any>window).Popper(attachToElement, this.body, {
       placement: this.placement,
     });
-    this.checkClickOutside = this.checkClickOutside.bind(this);
   }
 
-  createBody() {
-    let popoverColor = '#4d76c9';
+  show() {
+    this.body.style.display = 'block';
+    this.body.style.animation = 'showPopover .3s 1';
+    this.tooltip.update();
+    this.shown = true;
+    document.addEventListener('click', this.checkClickOutside);
+  }
+
+  hide() {
+    this.body.style.animation = 'hidePopover .3s 1';
+    this.shown = false;
+    document.removeEventListener('click', this.checkClickOutside);
+  }
+
+  isShown(): boolean {
+    return this.shown;
+  }
+
+  destroy() {
+    document.removeEventListener('click', this.checkClickOutside);
+    this.body.removeEventListener('animationend', this.transitionEnd);
+  }
+
+  private createBody() {
     this.body = document.createElement('DIV');
+    this.body.addEventListener('animationend', this.transitionEnd);
+    this.body.style.display = 'none';
     let triangleWrapper = document.createElement('DIV');
     let triangleEl = document.createElement('DIV');
 
@@ -34,28 +59,11 @@ export class Tooltip {
     triangleWrapper.appendChild(triangleEl);
     this.body.appendChild(triangleWrapper);
     this.body.appendChild(contentEl);
-    this.shown = true;
-  }
-
-  show() {
-    this.body.style.display = 'block';
-    this.tooltip.update();
-    this.shown = true;
-    document.addEventListener('click', this.checkClickOutside);
-  }
-
-  hide() {
-    this.body.style.display = 'none';
     this.shown = false;
-    document.removeEventListener('click', this.checkClickOutside)
   }
 
-  isShown(): boolean {
-    return this.shown;
-  }
-
-  destroy() {
-    document.removeEventListener('click', this.checkClickOutside)
+  private transitionEnd() {
+    this.body.style.display = this.shown ? 'block' : 'none';
   }
 
   private checkClickOutside(e: MouseEvent) {
@@ -95,7 +103,7 @@ export class AnswerDetailsComponent implements OnInit, OnDestroy {
               private appStateService: AppStateService, private formBuilder: FormBuilder) {
     this.router.routeReuseStrategy.shouldReuseRoute = function () {
       return false;
-    }
+    };
     this.checklistItemsForm = this.formBuilder.group({
       checklist_items: this.buildFormArray([], [])
     });
@@ -195,7 +203,6 @@ export class AnswerDetailsComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       this.indicatorTooltip = new Tooltip(this.tooltipButton.nativeElement, this.elementRef.nativeElement,
         this.answer.indicator_text, !this.answer.is_complete ? 'bottom' : 'bottom-end');
-      this.indicatorTooltip.hide();
     })
   }
 }

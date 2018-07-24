@@ -24,7 +24,8 @@
 }
 
 .filter-wrapper{
-  padding: 5px 10px 1px;
+  padding: 5px 20px 1px 0;
+  width: 100%;
 }
 
 .filter-field{
@@ -46,3 +47,4 @@
 .sub-menu-content{
   padding-top: 5px;
 }
+
