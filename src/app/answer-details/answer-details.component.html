@@ -3,7 +3,7 @@
   <div class="sub-toolbar">
     <div class="sub-toolbar-title">{{answer.question_code}}</div>
     <div class="buttons">
-      <button class="app-button view-indicator-btn" #tooltipButton (click)="toggleTooltip()" *ngIf="answer.indicator_text">View indicator</button>
+      <button class="app-button view-indicator-btn" #tooltipButton (click)="toggleTooltip()" *ngIf="answer.indicator_text">Indicator Quick View</button>
       <button class="app-button" *ngIf="!answer.is_complete" (click)="markAsComplete()">Mark as complete</button>
     </div>
   </div>
