@@ -14,6 +14,7 @@ export class AppStateService {
   private questions_remaining: number;
   private endpointUrl: string;
   private questions_search_url: string;
+  private applicability_url: string;
 
   constructor(private http: HttpClient, private router: Router) {
     this.endpointUrl = (<any>window).answer_set_url;
@@ -23,6 +24,7 @@ export class AppStateService {
     this.questions_remaining = (<any>window).num_questions_remaining;
     this.submit_url = (<any>window).submit_url;
     this.questions_search_url = (<any>window).questions_search_url;
+    this.applicability_url = (<any>window).applicability_url;
   }
 
   getSubmitUrl(): string {
@@ -72,7 +74,7 @@ export class AppStateService {
       });
   }
 
-  expandQuestionsMenu(filteredMenu: any[], expend: boolean){
+  expandQuestionsMenu(filteredMenu: any[], expend: boolean) {
     filteredMenu.forEach(item => {
       item.expanded = expend;
 
@@ -151,5 +153,39 @@ export class AppStateService {
     }
 
     return {question: firstFoundQuestion, subMenuItem, menuItem};
+  }
+
+  toggleApplicableMode(notApplicable: boolean, groupId: number) {
+    return this.http.put(this.applicability_url,
+      {
+        "area": groupId,
+        "not_applicable": !notApplicable
+      }).map((response: any) => {
+      this.setCompleteQuestionsCount(response.num_complete);
+      this.setRemainingQuestionsCount(response.num_remaining);
+      return response;
+    });
+  }
+
+  updateApplicableState(notApplicable: boolean, group: any) {
+    let question, subGrop;
+
+    group.not_applicable = notApplicable;
+
+    if (group.sub_areas.length > 0) {
+      for (let j = 0; j < group.sub_areas.length; j++) {
+        subGrop = group.sub_areas[j];
+        subGrop.not_applicable = notApplicable;
+        for (let k = 0; k < subGrop.questions.length; k++) {
+          question = subGrop.questions[k];
+          question.not_applicable = notApplicable;
+        }
+      }
+    } else {
+      for (let k = 0; k < group.questions.length; k++) {
+        question = group.questions[k];
+        question.not_applicable = notApplicable;
+      }
+    }
   }
 }

@@ -4,6 +4,7 @@ import {FormControl} from '@angular/forms';
 import {Subscription} from 'rxjs/index';
 import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/map';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-questions-menu',
@@ -18,7 +19,7 @@ export class QuestionsMenuComponent implements OnInit, OnDestroy {
   private filtering: boolean = false;
   private debounceTime: 1000;
 
-  constructor(private appStateService: AppStateService, private cdRef: ChangeDetectorRef) {
+  constructor(private appStateService: AppStateService, private cdRef: ChangeDetectorRef, private router: Router) {
   }
 
   ngOnInit() {
@@ -56,6 +57,15 @@ export class QuestionsMenuComponent implements OnInit, OnDestroy {
     this.cdRef.detectChanges();
   }
 
+  toggleApplicable(e: MouseEvent, notApplicable: boolean, group: any) {
+    e.stopPropagation();
+    this.appStateService.toggleApplicableMode(notApplicable, group.id).subscribe((response) => {
+      this.appStateService.updateApplicableState(!notApplicable, group);
+      this.cdRef.detectChanges();
+      this.router.navigate([`/answer/${this.getSelectedQuestion().answer_id}`])
+    });
+  }
+
   clearFilter() {
     this.unsubscribeFilter();
     this.filterFormControl.setValue('');
@@ -82,7 +92,10 @@ export class QuestionsMenuComponent implements OnInit, OnDestroy {
 
   private subscribeFilter() {
     this.filterFormControlSub = this.filterFormControl.valueChanges
-      .map(value => { this.filtering = true; return value })
+      .map(value => {
+        this.filtering = true;
+        return value
+      })
       .debounceTime(this.debounceTime)
       .subscribe(this.applyFilterSearch.bind(this));
   }

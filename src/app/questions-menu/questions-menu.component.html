@@ -26,6 +26,16 @@
                                   [ngClass]="{'active-header': menuItem.expanded}">
         <mat-panel-description>
           <div [ngClass]="{'active-item': menuItem.expanded}">{{menuItem.name | uppercase}}</div>
+
+          <button class="applicable-toggle-button"
+                  matTooltipClass="applicable-tooltip"
+                  mat-button
+                  mat-icon-button
+                  matTooltip="{{!menuItem.not_applicable ? 'Make not applicable' : 'Make applicable'}}"
+                  (click)="toggleApplicable($event, menuItem.not_applicable, menuItem)"
+                  aria-label="Toggle applicable state">
+            <i class="fas" [ngClass]="{'fa-check': !menuItem.not_applicable, 'fa-undo': menuItem.not_applicable}"></i>
+          </button>
         </mat-panel-description>
       </mat-expansion-panel-header>
 
@@ -42,12 +52,25 @@
                   <div>
                     {{subMenuItem.name}}
                   </div>
+                  <button class="applicable-toggle-button"
+                          matTooltipClass="applicable-tooltip"
+                          mat-button
+                          mat-icon-button
+                          matTooltip="{{!menuItem.not_applicable ? 'Make not applicable' : 'Make applicable'}}"
+                          (click)="toggleApplicable($event, subMenuItem.not_applicable, subMenuItem)"
+                          aria-label="Toggle applicable state">
+                    <i class="fas" [ngClass]="{'fa-check': !subMenuItem.not_applicable, 'fa-undo': subMenuItem.not_applicable}"></i>
+                  </button>
                 </mat-panel-description>
               </mat-expansion-panel-header>
 
               <div class="collapse-menu-content">
                 <div class="question-item"
-                     [ngClass]="{completed: question.is_complete, selected: question === getSelectedQuestion()}"
+                     [ngClass]="{
+                          completed: question.is_complete,
+                          'not-applicable': question.not_applicable,
+                          selected: question === getSelectedQuestion()
+                      }"
                      *ngFor="let question of subMenuItem.questions"
                      (click)="setSelectedQuestion(question)"
                      routerLink="/answer/{{question.answer_id}}">
@@ -61,7 +84,11 @@
           <div class="collapse-menu-content">
             <div class="question-item"
                  (click)="setSelectedQuestion(question)"
-                 [ngClass]="{completed: question.is_complete, selected: question === getSelectedQuestion()}"
+                 [ngClass]="{
+                      completed: question.is_complete,
+                      'not-applicable': question.not_applicable,
+                      selected: question === getSelectedQuestion()
+                  }"
                  *ngFor="let question of menuItem.questions"
                  routerLink="/answer/{{question.answer_id}}">
               {{question.display_code + ' ' + question.name}}
