@@ -7,7 +7,8 @@ import {
   MatExpansionModule,
   MatRadioModule,
   MatInputModule,
-  MatListModule
+  MatListModule,
+  MatIconModule
 } from '@angular/material';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
@@ -38,7 +39,8 @@ import {HttpClientModule} from '@angular/common/http';
     MatListModule,
     FormsModule,
     ReactiveFormsModule,
-    HttpClientModule
+    HttpClientModule,
+    MatIconModule
   ],
   providers: [AppStateService],
   bootstrap: [AppComponent]

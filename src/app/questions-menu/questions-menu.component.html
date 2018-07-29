@@ -3,15 +3,16 @@
     <input matInput type="text" placeholder="Search" [formControl]="filterFormControl">
     <button class="clear-button"
             mat-button
-            *ngIf="filterFormControl.value"
+            *ngIf="!filtering && filterFormControl.value"
             matSuffix
             mat-icon-button
             aria-label="Clear" (click)="clearFilter()">
-      x
+      <i class="fas fa-times"></i>
     </button>
+    <i *ngIf="!filterFormControl.value" class="fas fa-search" matSuffix></i>
   </mat-form-field>
   <button class="toggle-collapse-button" (click)="toggleCollapse()">
-    <span class="mat-expansion-indicator" [ngClass]="{expanded: expandedMode}"></span>
+    <i class="fas" [ngClass]="{'fa-chevron-down': expandedMode, 'fa-chevron-up': !expandedMode}"></i>
   </button>
 </div>
 

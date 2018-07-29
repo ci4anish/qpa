@@ -31,7 +31,7 @@
 
 .filter-field{
   width: 100%;
-  margin-right: 5px;
+  margin-right: 10px;
 }
 
 .active-item{
@@ -77,4 +77,12 @@
 
 .toggle-collapse-button .mat-expansion-indicator.expanded{
    transform: rotate(180deg);
+}
+
+i{
+  color: rgba(0,0,0,.54);
+}
+
+.toggle-collapse-button i {
+  font-size: 20px;
 }

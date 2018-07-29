@@ -15,6 +15,8 @@ export class QuestionsMenuComponent implements OnInit, OnDestroy {
   expandedMode: boolean = false;
   filterFormControl = new FormControl();
   private filterFormControlSub: Subscription;
+  private filtering: boolean = false;
+  private debounceTime: 1000;
 
   constructor(private appStateService: AppStateService, private cdRef: ChangeDetectorRef) {
   }
@@ -64,20 +66,24 @@ export class QuestionsMenuComponent implements OnInit, OnDestroy {
   private applyFilterSearch(filterValue?: string) {
     if (filterValue) {
       this.appStateService.filterQuestionsMenu(filterValue).subscribe((filteredMenu: any[]) => {
+        this.filtering = false;
         this.expandedMode = true;
         this.menu = filteredMenu;
         this.appStateService.setActiveMenuItem(this.getSelectedQuestion().id);
         this.cdRef.detectChanges();
+        console.log('filterQuestionsMenu');
       });
     } else {
       this.expandedMode = false;
       this.menu = this.appStateService.getMenuItems();
+      this.cdRef.detectChanges();
     }
   }
 
   private subscribeFilter() {
     this.filterFormControlSub = this.filterFormControl.valueChanges
-      .debounceTime(1000)
+      .map(value => { this.filtering = true; return value })
+      .debounceTime(this.debounceTime)
       .subscribe(this.applyFilterSearch.bind(this));
   }
 
