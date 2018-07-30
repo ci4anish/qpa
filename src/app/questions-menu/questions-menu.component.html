@@ -33,8 +33,10 @@
                   mat-icon-button
                   matTooltip="{{!menuItem.not_applicable ? 'Make not applicable' : 'Make applicable'}}"
                   (click)="toggleApplicable($event, menuItem.not_applicable, menuItem)"
-                  aria-label="Toggle applicable state">
-            <i class="fas" [ngClass]="{'fa-check': !menuItem.not_applicable, 'fa-undo': menuItem.not_applicable}"></i>
+                  aria-label="Toggle applicable state"
+                  [ngClass]="{'active': menuItem.not_applicable, '': !menuItem.not_applicable}">
+            N/A
+            <i class="fas" [ngClass]="{'fa-check': menuItem.not_applicable, 'fa': !menuItem.not_applicable}"></i>
           </button>
         </mat-panel-description>
       </mat-expansion-panel-header>
