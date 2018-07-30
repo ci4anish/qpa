@@ -94,3 +94,16 @@ i{
   align-items: center;
   justify-content: space-between;
 }
+
+
+.applicable-toggle-button {
+  border-radius: 4px;
+  width: auto;
+  padding: 4px;
+  min-width: 0;
+  line-height: inherit; 
+}
+
+.applicable-toggle-button .mat-button-ripple-round {
+  border-radius: 4px !important;
+}

@@ -30,13 +30,12 @@
           <button class="applicable-toggle-button"
                   matTooltipClass="applicable-tooltip"
                   mat-button
-                  mat-icon-button
                   matTooltip="{{!menuItem.not_applicable ? 'Make not applicable' : 'Make applicable'}}"
                   (click)="toggleApplicable($event, menuItem.not_applicable, menuItem)"
                   aria-label="Toggle applicable state"
-                  [ngClass]="{'active': menuItem.not_applicable, '': !menuItem.not_applicable}">
+                  [ngClass]="{'mm_active': menuItem.not_applicable, '': !menuItem.not_applicable}">
             N/A
-            <i class="fas" [ngClass]="{'fa-check': menuItem.not_applicable, 'fa': !menuItem.not_applicable}"></i>
+            <i class="fas" [ngClass]="{'fa-check': menuItem.not_applicable, '': !menuItem.not_applicable}"></i>
           </button>
         </mat-panel-description>
       </mat-expansion-panel-header>
@@ -54,15 +53,16 @@
                   <div>
                     {{subMenuItem.name}}
                   </div>
-                  <button class="applicable-toggle-button"
+                  <!-- <button class="applicable-toggle-button"
                           matTooltipClass="applicable-tooltip"
                           mat-button
-                          mat-icon-button
                           matTooltip="{{!menuItem.not_applicable ? 'Make not applicable' : 'Make applicable'}}"
                           (click)="toggleApplicable($event, subMenuItem.not_applicable, subMenuItem)"
-                          aria-label="Toggle applicable state">
-                    <i class="fas" [ngClass]="{'fa-check': !subMenuItem.not_applicable, 'fa-undo': subMenuItem.not_applicable}"></i>
-                  </button>
+                          aria-label="Toggle applicable state"
+                          [ngClass]="{'mm_active': menuItem.not_applicable, '': !menuItem.not_applicable}">
+                    N/A
+                    <i class="fas" [ngClass]="{'fa-check': subMenuItem.not_applicable, '': !subMenuItem.not_applicable}"></i>
+                  </button> -->
                 </mat-panel-description>
               </mat-expansion-panel-header>
 
