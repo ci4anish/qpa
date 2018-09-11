@@ -11,6 +11,14 @@
     </button>
     <i *ngIf="!filterFormControl.value" class="fas fa-search" matSuffix></i>
   </mat-form-field>
+  <button mat-icon-button [matMenuTriggerFor]="menuPanel">
+    <i class="fas" [ngClass]="activeFilterItem.iconClass"></i>
+  </button>
+  <mat-menu #menuPanel="matMenu">
+    <button mat-menu-item *ngFor="let item of filterMenuItems" (click)="setActiveFilterItem(item)">
+      {{item.text}}
+    </button>
+  </mat-menu>
   <button class="toggle-collapse-button" (click)="toggleCollapse()">
     <i class="fas" [ngClass]="{'fa-chevron-down': expandedMode, 'fa-chevron-up': !expandedMode}"></i>
   </button>
@@ -18,7 +26,7 @@
 
 <div class="accordion-wrapper">
   <mat-accordion displayMode="flat" [multi]="expandedMode">
-    <mat-expansion-panel *ngFor="let menuItem of menu"
+    <mat-expansion-panel *ngFor="let menuItem of displayedMenu"
                          [expanded]="menuItem.expanded"
                          (opened)="menuItem.expanded = true;"
                          (closed)="menuItem.expanded = false;">
@@ -53,16 +61,6 @@
                   <div>
                     {{subMenuItem.name}}
                   </div>
-                  <!-- <button class="applicable-toggle-button"
-                          matTooltipClass="applicable-tooltip"
-                          mat-button
-                          matTooltip="{{!menuItem.not_applicable ? 'Make not applicable' : 'Make applicable'}}"
-                          (click)="toggleApplicable($event, subMenuItem.not_applicable, subMenuItem)"
-                          aria-label="Toggle applicable state"
-                          [ngClass]="{'mm_active': menuItem.not_applicable, '': !menuItem.not_applicable}">
-                    N/A
-                    <i class="fas" [ngClass]="{'fa-check': subMenuItem.not_applicable, '': !subMenuItem.not_applicable}"></i>
-                  </button> -->
                 </mat-panel-description>
               </mat-expansion-panel-header>
 
@@ -83,7 +81,7 @@
           </mat-accordion>
         </div>
         <div *ngSwitchCase="false">
-          <div class="collapse-menu-content">
+          <div class="collapse-menu-content" *ngIf="(menuItem.questions && menuItem.questions.length > 0)">
             <div class="question-item"
                  (click)="setSelectedQuestion(question)"
                  [ngClass]="{

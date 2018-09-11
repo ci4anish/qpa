@@ -13,13 +13,15 @@ export class AppStateService {
   private questions_complete: number;
   private questions_remaining: number;
   private endpointUrl: string;
+  private answer_set_url: string;
   private questions_search_url: string;
   private applicability_url: string;
   private mark_complete_subroute: string;
   private mark_incomplete_subroute: string;
 
   constructor(private http: HttpClient, private router: Router) {
-    this.endpointUrl = (<any>window).answer_set_url;
+    this.endpointUrl = (<any>window).endpointUrl;
+    this.answer_set_url = (<any>window).answer_set_url;
     this.menu = (<any>window).sidebar_json.slice();
     this.assessmentCode = (<any>window).assessment_code;
     this.questions_complete = (<any>window).num_questions_complete;
@@ -71,8 +73,8 @@ export class AppStateService {
     this.selectedQuestion = selectedQuestion;
   }
 
-  filterQuestionsMenu(filterValue: string) {
-    return this.http.get(`${this.questions_search_url}/?q=${filterValue}`)
+  filterQuestionsMenu(filterValue: string, completion: string) {
+    return this.http.get(`${this.endpointUrl + this.questions_search_url}/?q=${filterValue}&completion=${completion}`)
       .map((filteredMenu: any[]) => {
         return this.expandQuestionsMenu(filteredMenu, true);
       });
@@ -100,19 +102,19 @@ export class AppStateService {
   }
 
   fetchAnswer(answerId: number) {
-    return this.http.get(this.endpointUrl + answerId + '/');
+    return this.http.get(this.endpointUrl + this.answer_set_url + answerId + '/');
   }
 
   updateAnswer(answerId: number, newValue: any) {
-    return this.http.patch(this.endpointUrl + answerId + '/', newValue);
+    return this.http.patch(this.endpointUrl + this.answer_set_url + answerId + '/', newValue);
   }
 
   markAnswerAsComplete(answerId: number) {
-    return this.http.put(this.endpointUrl + answerId + '/' + this.mark_complete_subroute + '/', undefined);
+    return this.http.put(this.endpointUrl + this.answer_set_url + answerId + '/' + this.mark_complete_subroute + '/', undefined);
   }
 
   markAnswerAsIncomplete(answerId: number){
-    return this.http.put(this.endpointUrl + answerId + '/' + this.mark_incomplete_subroute + '/', undefined);
+    return this.http.put(this.endpointUrl + this.answer_set_url + answerId + '/' + this.mark_incomplete_subroute + '/', undefined);
   }
 
   setActiveMenuItem(questionId: number) {
@@ -161,6 +163,33 @@ export class AppStateService {
     }
 
     return {question: firstFoundQuestion, subMenuItem, menuItem};
+  }
+
+  forEachMenuQuestion(menu, cb) {
+    let menuItem, subMenuItem, question;
+
+    for (let i = 0; i < menu.length; i++) {
+      menuItem = menu[i];
+
+      if (menuItem.sub_areas.length > 0) {
+        for (let j = 0; j < menuItem.sub_areas.length; j++) {
+          subMenuItem = menuItem.sub_areas[j];
+
+          for (let k = 0; k < subMenuItem.questions.length; k++) {
+
+            question = subMenuItem.questions[k];
+
+            cb(question, subMenuItem, menuItem);
+          }
+        }
+      } else {
+        for (let k = 0; k < menuItem.questions.length; k++) {
+          question = menuItem.questions[k];
+
+          cb(question, menuItem);
+        }
+      }
+    }
   }
 
   toggleApplicableMode(notApplicable: boolean, groupId: number) {

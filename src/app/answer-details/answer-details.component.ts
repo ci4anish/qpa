@@ -1,8 +1,9 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { Component, AfterViewInit, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppStateService } from '../app-state.service'
 import { FormBuilder, FormGroup } from '@angular/forms'
-import { Subscription } from 'rxjs/index';
+import { Subject, Subscription } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import 'rxjs/add/operator/debounceTime';
 
 export class Tooltip {
@@ -91,7 +92,7 @@ export class Tooltip {
   styleUrls: ['./answer-details.component.css']
 })
 
-export class AnswerDetailsComponent implements OnInit, OnDestroy {
+export class AnswerDetailsComponent implements AfterViewInit, OnDestroy {
   @ViewChild('tooltipButton') tooltipButton: ElementRef;
   answer: any;
   checklistItemsForm: FormGroup;
@@ -101,6 +102,7 @@ export class AnswerDetailsComponent implements OnInit, OnDestroy {
   private checklistItemsFormSub: Subscription;
   private complianceOptionFormSub: Subscription;
   private observationFromSub: Subscription;
+  protected ngUnsubscribe: Subject<void> = new Subject<void>();
 
   constructor(private route: ActivatedRoute,
               private router: Router,
@@ -126,8 +128,8 @@ export class AnswerDetailsComponent implements OnInit, OnDestroy {
     return this.checklistItemsForm.get('checklist_items');
   };
 
-  ngOnInit() {
-    this.appStateService.fetchAnswer(+this.route.snapshot.paramMap.get('answerId')).subscribe((answer: any) => {
+  ngAfterViewInit() {
+    this.appStateService.fetchAnswer(+this.route.snapshot.paramMap.get('answerId')).pipe(takeUntil(this.ngUnsubscribe)).subscribe((answer: any) => {
       this.answer = answer;
       if (answer.all_checklist_items && answer.all_checklist_items.length > 0) {
         this.checklistItemsForm.setControl('checklist_items', this.buildFormArray(answer.all_checklist_items, answer.checklist_items));
@@ -175,6 +177,8 @@ export class AnswerDetailsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
     if (this.answer) {
       this.checklistItemsFormSub.unsubscribe();
       this.complianceOptionFormSub.unsubscribe();
