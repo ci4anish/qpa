@@ -1,8 +1,8 @@
-import {Component, OnInit, OnDestroy, ViewChild, ElementRef} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
-import {AppStateService} from '../app-state.service'
-import {FormBuilder, FormGroup} from "@angular/forms"
-import {Subscription} from 'rxjs/index';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AppStateService } from '../app-state.service'
+import { FormBuilder, FormGroup } from '@angular/forms'
+import { Subscription } from 'rxjs/index';
 import 'rxjs/add/operator/debounceTime';
 
 export class Tooltip {
@@ -10,7 +10,10 @@ export class Tooltip {
   tooltip: any;
   private shown: boolean;
 
-  constructor(private attachToElement: HTMLElement, appendToElement: HTMLElement, private tooltipText: string, private placement: string) {
+  constructor(private attachToElement: HTMLElement,
+              appendToElement: HTMLElement,
+              private tooltipText: string,
+              private placement: string) {
     this.checkClickOutside = this.checkClickOutside.bind(this);
     this.transitionEnd = this.transitionEnd.bind(this);
     this.createBody();
@@ -99,8 +102,12 @@ export class AnswerDetailsComponent implements OnInit, OnDestroy {
   private complianceOptionFormSub: Subscription;
   private observationFromSub: Subscription;
 
-  constructor(private route: ActivatedRoute, private router: Router, private elementRef: ElementRef,
-              private appStateService: AppStateService, private formBuilder: FormBuilder) {
+  constructor(private route: ActivatedRoute,
+              private router: Router,
+              private elementRef: ElementRef,
+              private appStateService: AppStateService,
+              private changeDetectorRef: ChangeDetectorRef,
+              private formBuilder: FormBuilder) {
     this.router.routeReuseStrategy.shouldReuseRoute = function () {
       return false;
     };
@@ -156,11 +163,24 @@ export class AnswerDetailsComponent implements OnInit, OnDestroy {
     });
   }
 
+  markAsIncomplete() {
+    this.appStateService.markAnswerAsIncomplete(this.answer.id).subscribe((response: any) => {
+      this.appStateService.setCompleteQuestionsCount(response.num_complete);
+      this.appStateService.setRemainingQuestionsCount(response.num_remaining);
+      let {question} = this.appStateService.getQuestionById(this.answer.question);
+      question.is_complete = false;
+      this.answer.is_complete = false;
+      this.changeDetectorRef.detectChanges();
+    });
+  }
+
   ngOnDestroy() {
-    this.checklistItemsFormSub.unsubscribe();
-    this.complianceOptionFormSub.unsubscribe();
-    this.observationFromSub.unsubscribe();
-    this.indicatorTooltip.destroy();
+    if (this.answer) {
+      this.checklistItemsFormSub.unsubscribe();
+      this.complianceOptionFormSub.unsubscribe();
+      this.observationFromSub.unsubscribe();
+      this.indicatorTooltip.destroy();
+    }
   }
 
   toggleTooltip() {

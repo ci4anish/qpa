@@ -15,6 +15,8 @@ export class AppStateService {
   private endpointUrl: string;
   private questions_search_url: string;
   private applicability_url: string;
+  private mark_complete_subroute: string;
+  private mark_incomplete_subroute: string;
 
   constructor(private http: HttpClient, private router: Router) {
     this.endpointUrl = (<any>window).answer_set_url;
@@ -25,6 +27,8 @@ export class AppStateService {
     this.submit_url = (<any>window).submit_url;
     this.questions_search_url = (<any>window).questions_search_url;
     this.applicability_url = (<any>window).applicability_url;
+    this.mark_complete_subroute = (<any>window).mark_complete_subroute;
+    this.mark_incomplete_subroute = (<any>window).mark_incomplete_subroute;
   }
 
   getSubmitUrl(): string {
@@ -104,7 +108,11 @@ export class AppStateService {
   }
 
   markAnswerAsComplete(answerId: number) {
-    return this.http.put(this.endpointUrl + answerId + '/mark_complete/', undefined);
+    return this.http.put(this.endpointUrl + answerId + '/' + this.mark_complete_subroute + '/', undefined);
+  }
+
+  markAnswerAsIncomplete(answerId: number){
+    return this.http.put(this.endpointUrl + answerId + '/' + this.mark_incomplete_subroute + '/', undefined);
   }
 
   setActiveMenuItem(questionId: number) {

@@ -5,6 +5,7 @@
     <div class="buttons">
       <button class="app-button view-indicator-btn" #tooltipButton (click)="toggleTooltip()" *ngIf="answer.indicator_text">Indicator Quick View</button>
       <button class="app-button" *ngIf="!answer.is_complete && !answer.not_applicable" (click)="markAsComplete()">Mark as complete</button>
+      <button class="app-button" *ngIf="answer.is_complete && !answer.not_applicable" (click)="markAsIncomplete()">Mark as incomplete</button>
     </div>
   </div>
   <div class="question-text">{{answer.question_text}}</div>
