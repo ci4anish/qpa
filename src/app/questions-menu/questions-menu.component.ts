@@ -20,7 +20,7 @@ interface FilterItem {
 export class QuestionsMenuComponent implements OnInit, OnDestroy {
   displayedMenu: any[];
   menu: any[];
-  menuItemsToFilter: Map = new Map();
+  menuItemsToFilter: Map<any, {questionsToRemove: any[], parentItem: any}> = new Map();
   filterMenuItems: FilterItem[] = [
     {
       text: 'All',
@@ -122,7 +122,6 @@ export class QuestionsMenuComponent implements OnInit, OnDestroy {
     this.menuItemsToFilter.clear();
     this.displayedMenu = JSON.parse(JSON.stringify(this.menu));
     this.appStateService.forEachMenuQuestion(this.displayedMenu, (question, menuItem, parentItem) => {
-      // if (question.is_complete || question.not_applicable) {
       if (checkConditionCb(question)) {
         return;
       }
