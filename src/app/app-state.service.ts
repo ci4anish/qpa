@@ -1,11 +1,14 @@
-import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {Router} from '@angular/router';
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
+import { Subject } from 'rxjs/index';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AppStateService {
+  leftMenuChangeEmitter: Subject<void> = new Subject();
+
   private submit_url: string;
   private menu;
   private selectedQuestion;
@@ -99,6 +102,7 @@ export class AppStateService {
       selected.subMenuItem.expanded = true;
     }
     selected.menuItem.expanded = true;
+    this.leftMenuChangeEmitter.next();
   }
 
   fetchAnswer(answerId: number) {
@@ -113,7 +117,7 @@ export class AppStateService {
     return this.http.put(this.endpointUrl + this.answer_set_url + answerId + '/' + this.mark_complete_subroute + '/', undefined);
   }
 
-  markAnswerAsIncomplete(answerId: number){
+  markAnswerAsIncomplete(answerId: number) {
     return this.http.put(this.endpointUrl + this.answer_set_url + answerId + '/' + this.mark_incomplete_subroute + '/', undefined);
   }
 
@@ -193,10 +197,10 @@ export class AppStateService {
   }
 
   toggleApplicableMode(notApplicable: boolean, groupId: number) {
-    return this.http.put(this.applicability_url,
+    return this.http.put(this.endpointUrl + this.applicability_url,
       {
-        "area": groupId,
-        "not_applicable": !notApplicable
+        'area': groupId,
+        'not_applicable': !notApplicable
       }).map((response: any) => {
       this.setCompleteQuestionsCount(response.num_complete);
       this.setRemainingQuestionsCount(response.num_remaining);

@@ -12,7 +12,7 @@
     <i *ngIf="!filterFormControl.value" class="fas fa-search" matSuffix></i>
   </mat-form-field>
   <button mat-icon-button [matMenuTriggerFor]="menuPanel">
-    <i class="fas" [ngClass]="activeFilterItem.iconClass"></i>
+    <i class="fas fa-filter filter-button-icon" [ngClass]="activeFilterItem.colorClass"></i>
   </button>
   <mat-menu #menuPanel="matMenu">
     <button mat-menu-item *ngFor="let item of filterMenuItems" (click)="setActiveFilterItem(item)">
@@ -43,7 +43,6 @@
                   aria-label="Toggle applicable state"
                   [ngClass]="{'mm_active': menuItem.not_applicable, '': !menuItem.not_applicable}">
             N/A
-            <!-- <i class="fas" [ngClass]="{'fa-check': menuItem.not_applicable, '': !menuItem.not_applicable}"></i> -->
           </button>
         </mat-panel-description>
       </mat-expansion-panel-header>

@@ -157,11 +157,11 @@ export class AnswerDetailsComponent implements AfterViewInit, OnDestroy {
 
   markAsComplete() {
     this.appStateService.markAnswerAsComplete(this.answer.id).subscribe((response: any) => {
+      let {question} = this.appStateService.getQuestionById(this.answer.question);
+      question.is_complete = true;
       this.appStateService.setActiveMenuItem(response.next_question_id);
       this.appStateService.setCompleteQuestionsCount(response.num_complete);
       this.appStateService.setRemainingQuestionsCount(response.num_remaining);
-      let {question} = this.appStateService.getQuestionById(this.answer.question);
-      question.is_complete = true;
     });
   }
 

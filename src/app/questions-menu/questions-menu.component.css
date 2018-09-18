@@ -101,9 +101,17 @@ i{
   width: auto;
   padding: 4px;
   min-width: 0;
-  line-height: inherit; 
+  line-height: inherit;
 }
 
 .applicable-toggle-button .mat-button-ripple-round {
   border-radius: 4px !important;
+}
+
+.filter-button-icon.green{
+  color: #97d67b;
+}
+
+.filter-button-icon.red{
+  color: #cc0033;
 }

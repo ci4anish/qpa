@@ -1,14 +1,14 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { AppStateService } from '../app-state.service';
 import { FormControl } from '@angular/forms';
-import { Subscription } from 'rxjs/index';
+import { Subscription } from 'rxjs';
 import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/map';
 import { Router } from '@angular/router';
 
 interface FilterItem {
   text: string;
-  iconClass: string;
+  colorClass: string;
   filter: () => void;
 }
 
@@ -24,17 +24,17 @@ export class QuestionsMenuComponent implements OnInit, OnDestroy {
   filterMenuItems: FilterItem[] = [
     {
       text: 'All',
-      iconClass: 'fa-filter',
+      colorClass: 'grey',
       filter: this.filterByAll.bind(this)
     },
     {
       text: 'Completed',
-      iconClass: 'fa-check',
+      colorClass: 'green',
       filter: this.filterByCompleted.bind(this)
     },
     {
       text: 'Incompleted',
-      iconClass: 'fa-edit',
+      colorClass: 'red',
       filter: this.filterByIncompleted.bind(this)
     }
   ];
@@ -42,6 +42,7 @@ export class QuestionsMenuComponent implements OnInit, OnDestroy {
   expandedMode: boolean = false;
   filterFormControl = new FormControl();
   private filterFormControlSub: Subscription;
+  private leftMenuChangesSubscription: Subscription;
   private filtering: boolean = false;
   private filterValue: string;
   private debounceTime: 1000;
@@ -58,6 +59,7 @@ export class QuestionsMenuComponent implements OnInit, OnDestroy {
     this.appStateService.setActiveMenuItem(questionId);
     this.subscribeFilter();
     this.activeFilterItem = this.filterMenuItems[0];
+    this.leftMenuChangesSubscription = this.appStateService.leftMenuChangeEmitter.subscribe(() => {this.cdRef.detectChanges();})
   }
 
   setActiveFilterItem(item: FilterItem) {
@@ -75,6 +77,7 @@ export class QuestionsMenuComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.unsubscribeFilter();
+    this.leftMenuChangesSubscription.unsubscribe();
   }
 
   setSelectedQuestion(question) {
