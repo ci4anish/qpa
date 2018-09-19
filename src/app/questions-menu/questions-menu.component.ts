@@ -1,15 +1,14 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
-import { AppStateService } from '../app-state.service';
+import { AppStateService, CompletionState } from '../app-state.service';
 import { FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import 'rxjs/add/operator/debounceTime';
-import 'rxjs/add/operator/map';
+import { map, debounceTime } from 'rxjs/operators';
 import { Router } from '@angular/router';
 
 interface FilterItem {
   text: string;
+  state: CompletionState
   colorClass: string;
-  filter: () => void;
 }
 
 @Component({
@@ -18,57 +17,50 @@ interface FilterItem {
   styleUrls: ['./questions-menu.component.css']
 })
 export class QuestionsMenuComponent implements OnInit, OnDestroy {
-  displayedMenu: any[];
-  menu: any[];
-  menuItemsToFilter: Map<any, {questionsToRemove: any[], parentItem: any}> = new Map();
   filterMenuItems: FilterItem[] = [
     {
       text: 'All',
-      colorClass: 'grey',
-      filter: this.filterByAll.bind(this)
+      state: CompletionState.all,
+      colorClass: 'grey'
     },
     {
       text: 'Completed',
-      colorClass: 'green',
-      filter: this.filterByCompleted.bind(this)
+      state: CompletionState.completed,
+      colorClass: 'green'
     },
     {
       text: 'Incompleted',
-      colorClass: 'red',
-      filter: this.filterByIncompleted.bind(this)
+      state: CompletionState.incompleted,
+      colorClass: 'red'
     }
   ];
   activeFilterItem: FilterItem;
   expandedMode: boolean = false;
   filterFormControl = new FormControl();
+  filtering: boolean = false;
   private filterFormControlSub: Subscription;
   private leftMenuChangesSubscription: Subscription;
-  private filtering: boolean = false;
-  private filterValue: string;
-  private debounceTime: 1000;
+  private filterValue: string = '';
+  private debounceTime: number = 1000;
 
-  constructor(private appStateService: AppStateService,
+  constructor(public appStateService: AppStateService,
               private cdRef: ChangeDetectorRef,
               private router: Router) {
   }
 
   ngOnInit() {
-    this.menu = this.appStateService.getMenuItems();
-    this.displayedMenu = this.menu.slice();
     let questionId = this.appStateService.getPreSelectedQuestionId();
     this.appStateService.setActiveMenuItem(questionId);
     this.subscribeFilter();
     this.activeFilterItem = this.filterMenuItems[0];
-    this.leftMenuChangesSubscription = this.appStateService.leftMenuChangeEmitter.subscribe(() => {this.cdRef.detectChanges();})
+    this.leftMenuChangesSubscription = this.appStateService.leftMenuChangeEmitter.subscribe(() => {
+      this.cdRef.detectChanges();
+    })
   }
 
   setActiveFilterItem(item: FilterItem) {
     this.activeFilterItem = item;
-    if (this.filterValue) {
-      this.applyFilterSearch(this.filterValue);
-    } else {
-      item.filter();
-    }
+    this.applyFilterSearch(this.filterValue);
   }
 
   preventCollapse(e: MouseEvent) {
@@ -90,14 +82,22 @@ export class QuestionsMenuComponent implements OnInit, OnDestroy {
 
   toggleCollapse() {
     if (!this.expandedMode) {
-      this.expandedMode = true;
-      this.appStateService.expandQuestionsMenu(this.displayedMenu, true);
+      this.expendMenu();
     } else {
-      this.expandedMode = false;
-      this.appStateService.expandQuestionsMenu(this.displayedMenu, false);
-      this.appStateService.selectLeftMenuQuestion(this.appStateService.getQuestionById(this.getSelectedQuestion().id));
+      this.collapseMenu();
     }
     this.cdRef.detectChanges();
+  }
+
+  expendMenu() {
+    this.expandedMode = true;
+    this.appStateService.expandQuestionsMenu(true);
+  }
+
+  collapseMenu() {
+    this.expandedMode = false;
+    this.appStateService.expandQuestionsMenu(false);
+    this.appStateService.selectLeftMenuQuestion(this.appStateService.getQuestionInfoById(this.getSelectedQuestion().id));
   }
 
   toggleApplicable(e: MouseEvent, notApplicable: boolean, group: any) {
@@ -114,76 +114,30 @@ export class QuestionsMenuComponent implements OnInit, OnDestroy {
     this.filterFormControl.setValue('');
     this.filterValue = '';
     this.subscribeFilter();
-    this.applyFilterSearch();
-  }
-
-  private filterByAll() {
-    this.displayedMenu = this.menu.slice();
-  }
-
-  private filterQuestionsFromCondition(checkConditionCb) {
-    this.menuItemsToFilter.clear();
-    this.displayedMenu = JSON.parse(JSON.stringify(this.menu));
-    this.appStateService.forEachMenuQuestion(this.displayedMenu, (question, menuItem, parentItem) => {
-      if (checkConditionCb(question)) {
-        return;
-      }
-
-      if (this.menuItemsToFilter.has(menuItem)) {
-        let questionsToRemove = this.menuItemsToFilter.get(menuItem).questionsToRemove;
-        questionsToRemove.push(question);
-      } else {
-        this.menuItemsToFilter.set(menuItem, {questionsToRemove: [question], parentItem: parentItem});
-      }
-    });
-    this.menuItemsToFilter.forEach((value, menuItem) => {
-      value.questionsToRemove.forEach(question => {
-        menuItem.questions.splice(menuItem.questions.indexOf(question), 1);
-      });
-      if (menuItem.questions.length === 0 && value.parentItem) {
-        value.parentItem.sub_areas.splice(value.parentItem.sub_areas.indexOf(menuItem), 1);
-      }
-    });
-
-    this.displayedMenu = this.displayedMenu.filter(menuItem => {
-      return (menuItem.sub_areas && menuItem.sub_areas.length > 0) || (menuItem.questions && menuItem.questions.length > 0);
-    });
-  }
-
-  private filterByCompleted() {
-    this.filterQuestionsFromCondition(question => question.is_complete || question.not_applicable);
-  }
-
-  private filterByIncompleted() {
-    this.filterQuestionsFromCondition(question => !question.is_complete && !question.not_applicable);
+    this.applyFilterSearch(this.filterValue);
   }
 
   private applyFilterSearch(filterValue?: string) {
-    if (filterValue) {
-      this.appStateService.filterQuestionsMenu(filterValue, this.activeFilterItem.text.toLowerCase()).subscribe((filteredMenu: any[]) => {
-        this.filtering = false;
-        this.expandedMode = true;
-        this.menu = filteredMenu;
-        this.displayedMenu = this.menu;
-        this.appStateService.setActiveMenuItem(this.getSelectedQuestion().id);
-        this.cdRef.detectChanges();
-      });
-    } else {
-      this.expandedMode = false;
-      this.menu = this.appStateService.getMenuItems();
-      this.displayedMenu = this.menu;
-      this.cdRef.detectChanges();
-    }
+    this.appStateService.filterQuestionsMenu(filterValue, this.activeFilterItem.state).subscribe((filteredMenu: any[]) => {
+      this.filtering = false;
+
+      if (filteredMenu.length > 0) {
+        if (this.appStateService.filterState.isFilterApplied()) {
+          this.appStateService.setFirstMenuItemActive();
+          this.expendMenu();
+        } else {
+          this.appStateService.selectLeftMenuQuestion(this.appStateService.getQuestionInfoById(this.getSelectedQuestion().id));
+        }
+      }
+    });
   }
 
   private subscribeFilter() {
-    this.filterFormControlSub = this.filterFormControl.valueChanges
-      .map(value => {
-        this.filtering = true;
-        this.filterValue = value;
-        return value
-      })
-      .debounceTime(this.debounceTime)
+    this.filterFormControlSub = this.filterFormControl.valueChanges.pipe(debounceTime(this.debounceTime), map(value => {
+      this.filtering = true;
+      this.filterValue = value;
+      return value
+    }))
       .subscribe(this.applyFilterSearch.bind(this));
   }
 

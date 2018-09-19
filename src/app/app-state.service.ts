@@ -1,16 +1,36 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Subject } from 'rxjs/index';
+import { Subject } from 'rxjs';
+import { map } from 'rxjs/operators';
+
+export enum CompletionState {
+  all = 'all',
+  completed = 'completed',
+  incompleted = 'incompleted',
+}
+
+class FilterState {
+  constructor(public filterValue: string, public completionState: CompletionState) {
+  }
+
+  getQueryParams(): string {
+    return `?q=${this.filterValue}&completion=${this.completionState}`;
+  }
+
+  isFilterApplied(): boolean {
+    return !!this.filterValue || this.completionState && this.completionState !== CompletionState.all
+  }
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class AppStateService {
   leftMenuChangeEmitter: Subject<void> = new Subject();
-
+  public filterState: FilterState;
   private submit_url: string;
-  private menu;
+  private menu: any[];
   private selectedQuestion;
   private assessmentCode: string;
   private questions_complete: number;
@@ -76,15 +96,18 @@ export class AppStateService {
     this.selectedQuestion = selectedQuestion;
   }
 
-  filterQuestionsMenu(filterValue: string, completion: string) {
-    return this.http.get(`${this.endpointUrl + this.questions_search_url}/?q=${filterValue}&completion=${completion}`)
-      .map((filteredMenu: any[]) => {
-        return this.expandQuestionsMenu(filteredMenu, true);
-      });
+  filterQuestionsMenu(filterValue: string, completion: CompletionState) {
+    this.filterState = new FilterState(filterValue, completion);
+
+    return this.http.get(`${this.endpointUrl + this.questions_search_url}/${this.filterState.getQueryParams()}`)
+      .pipe(map((filteredMenu: any[]) => {
+        this.menu = filteredMenu;
+        return this.menu;
+      }));
   }
 
-  expandQuestionsMenu(filteredMenu: any[], expend: boolean) {
-    filteredMenu.forEach(item => {
+  expandQuestionsMenu(expend: boolean) {
+    this.getMenuItems().forEach(item => {
       item.expanded = expend;
 
       if (item.sub_areas.length > 0) {
@@ -93,8 +116,7 @@ export class AppStateService {
         });
       }
     });
-
-    return filteredMenu;
+    this.leftMenuChangeEmitter.next();
   }
 
   selectLeftMenuQuestion(selected) {
@@ -112,27 +134,34 @@ export class AppStateService {
   updateAnswer(answerId: number, newValue: any) {
     return this.http.patch(this.endpointUrl + this.answer_set_url + answerId + '/', newValue);
   }
-
   markAnswerAsComplete(answerId: number) {
-    return this.http.put(this.endpointUrl + this.answer_set_url + answerId + '/' + this.mark_complete_subroute + '/', undefined);
+    const filterValue = this.filterState.isFilterApplied ? this.filterState.getQueryParams() : '';
+    return this.http.put(this.endpointUrl + this.answer_set_url + answerId + '/' + this.mark_complete_subroute + '/' + filterValue, undefined);
   }
 
   markAnswerAsIncomplete(answerId: number) {
     return this.http.put(this.endpointUrl + this.answer_set_url + answerId + '/' + this.mark_incomplete_subroute + '/', undefined);
   }
 
+  setFirstMenuItemActive() {
+    const firstItem = this.getMenuItems()[0];
+    const hasSubAreas = firstItem.sub_areas && firstItem.sub_areas.length > 0;
+    const firstQuestionId = hasSubAreas ? firstItem.sub_areas[0].questions[0].id : firstItem.questions[0].id;
+    this.setActiveMenuItem(firstQuestionId);
+  }
+
   setActiveMenuItem(questionId: number) {
-    let selected = this.getQuestionById(questionId);
+    let selected = this.getQuestionInfoById(questionId);
     this.setSelectedQuestion(selected.question);
     this.selectLeftMenuQuestion(selected);
     this.router.navigateByUrl('/answer/' + selected.question.answer_id);
   }
 
-  getQuestionById(id: number) {
+  getQuestionInfoById(id: number) {
     let menuItem, subMenuItem, question, firstFoundQuestion;
 
-    for (let i = 0; i < this.menu.length; i++) {
-      menuItem = this.menu[i];
+    for (let i = 0; i < this.getMenuItems().length; i++) {
+      menuItem = this.getMenuItems()[i];
 
       if (menuItem.sub_areas.length > 0) {
         for (let j = 0; j < menuItem.sub_areas.length; j++) {
@@ -201,11 +230,13 @@ export class AppStateService {
       {
         'area': groupId,
         'not_applicable': !notApplicable
-      }).map((response: any) => {
-      this.setCompleteQuestionsCount(response.num_complete);
-      this.setRemainingQuestionsCount(response.num_remaining);
-      return response;
-    });
+      }).pipe(
+      map((response: any) => {
+        this.setCompleteQuestionsCount(response.num_complete);
+        this.setRemainingQuestionsCount(response.num_remaining);
+        return response;
+      })
+    );
   }
 
   updateApplicableState(notApplicable: boolean, group: any) {

@@ -26,7 +26,7 @@
 
 <div class="accordion-wrapper">
   <mat-accordion displayMode="flat" [multi]="expandedMode">
-    <mat-expansion-panel *ngFor="let menuItem of displayedMenu"
+    <mat-expansion-panel *ngFor="let menuItem of appStateService.getMenuItems()"
                          [expanded]="menuItem.expanded"
                          (opened)="menuItem.expanded = true;"
                          (closed)="menuItem.expanded = false;">
@@ -68,7 +68,7 @@
                      [ngClass]="{
                           completed: question.is_complete,
                           'not-applicable': question.not_applicable,
-                          selected: question === getSelectedQuestion()
+                          selected: question.id === getSelectedQuestion().id
                       }"
                      *ngFor="let question of subMenuItem.questions"
                      (click)="setSelectedQuestion(question)"

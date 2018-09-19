@@ -1,6 +1,6 @@
 import { Component, AfterViewInit, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AppStateService } from '../app-state.service'
+import { AppStateService, CompletionState } from '../app-state.service'
 import { FormBuilder, FormGroup } from '@angular/forms'
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -157,11 +157,19 @@ export class AnswerDetailsComponent implements AfterViewInit, OnDestroy {
 
   markAsComplete() {
     this.appStateService.markAnswerAsComplete(this.answer.id).subscribe((response: any) => {
-      let {question} = this.appStateService.getQuestionById(this.answer.question);
-      question.is_complete = true;
+      let {question, subMenuItem, menuItem} = this.appStateService.getQuestionInfoById(this.answer.question);
+      const questions = subMenuItem ? subMenuItem.questions : menuItem.questions;
+      if (this.appStateService.filterState.isFilterApplied() &&
+        this.appStateService.filterState.completionState === CompletionState.incompleted) {
+        questions.splice(questions.indexOf(question), 1);
+      } else {
+        question.is_complete = true;
+      }
+      this.answer.is_complete = true;
       this.appStateService.setActiveMenuItem(response.next_question_id);
       this.appStateService.setCompleteQuestionsCount(response.num_complete);
       this.appStateService.setRemainingQuestionsCount(response.num_remaining);
+      this.changeDetectorRef.detectChanges();
     });
   }
 
@@ -169,8 +177,14 @@ export class AnswerDetailsComponent implements AfterViewInit, OnDestroy {
     this.appStateService.markAnswerAsIncomplete(this.answer.id).subscribe((response: any) => {
       this.appStateService.setCompleteQuestionsCount(response.num_complete);
       this.appStateService.setRemainingQuestionsCount(response.num_remaining);
-      let {question} = this.appStateService.getQuestionById(this.answer.question);
-      question.is_complete = false;
+      let {question, subMenuItem, menuItem} = this.appStateService.getQuestionInfoById(this.answer.question);
+      const questions = subMenuItem ? subMenuItem.questions : menuItem.questions;
+      if (this.appStateService.filterState.isFilterApplied() &&
+        this.appStateService.filterState.completionState === CompletionState.completed) {
+        questions.splice(questions.indexOf(question), 1);
+      } else {
+        question.is_complete = false;
+      }
       this.answer.is_complete = false;
       this.changeDetectorRef.detectChanges();
     });
