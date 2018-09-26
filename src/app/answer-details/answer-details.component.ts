@@ -55,7 +55,7 @@ export class Tooltip {
     let triangleEl = document.createElement('DIV');
 
     let contentEl = document.createElement('DIV');
-    contentEl.innerText = this.tooltipText;
+    contentEl.innerHTML = this.tooltipText;
     triangleWrapper.style.justifyContent = this.placement === 'bottom' ? 'center' : 'flex-end';
     contentEl.classList.add('indicator-popup');
     triangleEl.classList.add('indicator-popup-triangle');
