@@ -49,6 +49,7 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+  position: relative;
 }
 
 .active-header{
@@ -114,4 +115,17 @@ i{
 
 .filter-button-icon.red{
   color: #cc0033;
+}
+
+.loading-overlay{
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0,0,0, .3);
+  transition: 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

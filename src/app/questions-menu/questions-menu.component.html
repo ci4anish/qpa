@@ -98,3 +98,8 @@
     </mat-expansion-panel>
   </mat-accordion>
 </div>
+
+
+<div class="loading-overlay" *ngIf="filtering">
+  <mat-progress-spinner class="spinner" mode="indeterminate" [diameter]="50"></mat-progress-spinner>
+</div>

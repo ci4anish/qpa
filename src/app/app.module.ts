@@ -10,7 +10,8 @@ import {
   MatListModule,
   MatIconModule,
   MatTooltipModule,
-  MatMenuModule
+  MatMenuModule,
+  MatProgressSpinnerModule
 } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
@@ -44,7 +45,8 @@ import { HttpClientModule } from '@angular/common/http';
     HttpClientModule,
     MatIconModule,
     MatTooltipModule,
-    MatMenuModule
+    MatMenuModule,
+    MatProgressSpinnerModule
   ],
   providers: [AppStateService],
   bootstrap: [AppComponent]

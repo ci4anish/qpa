@@ -15,7 +15,15 @@ class FilterState {
   }
 
   getQueryParams(): string {
-    return `?q=${this.filterValue}&completion=${this.completionState}`;
+    let queryString = '?';
+    if(this.filterValue && this.completionState) {
+      queryString += `q=${this.filterValue}&completion=${this.completionState}`;
+    }else if(this.filterValue && !this.completionState){
+      queryString += `q=${this.filterValue}`;
+    }else if(!this.filterValue && this.completionState){
+      queryString += `q=&completion=${this.completionState}`;
+    }
+    return queryString;
   }
 
   isFilterApplied(): boolean {
@@ -28,7 +36,7 @@ class FilterState {
 })
 export class AppStateService {
   leftMenuChangeEmitter: Subject<void> = new Subject();
-  public filterState: FilterState;
+  public filterState: FilterState = new FilterState('', CompletionState.all);
   private submit_url: string;
   private menu: any[];
   private selectedQuestion;

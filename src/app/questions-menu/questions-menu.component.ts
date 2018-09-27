@@ -59,6 +59,7 @@ export class QuestionsMenuComponent implements OnInit, OnDestroy {
   }
 
   setActiveFilterItem(item: FilterItem) {
+    this.filtering = true;
     this.activeFilterItem = item;
     this.applyFilterSearch(this.filterValue);
   }
@@ -110,6 +111,7 @@ export class QuestionsMenuComponent implements OnInit, OnDestroy {
   }
 
   clearFilter() {
+    this.filtering = true;
     this.unsubscribeFilter();
     this.filterFormControl.setValue('');
     this.filterValue = '';
