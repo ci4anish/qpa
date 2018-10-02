@@ -157,6 +157,7 @@ export class AnswerDetailsComponent implements AfterViewInit, OnDestroy {
 
   markAsComplete() {
     this.appStateService.markAnswerAsComplete(this.answer.id).subscribe((response: any) => {
+      response.next_question_id = null;
       let {question, subMenuItem, menuItem} = this.appStateService.getQuestionInfoById(this.answer.question);
       const questions = subMenuItem ? subMenuItem.questions : menuItem.questions;
       if (this.appStateService.filterState.isFilterApplied() &&
@@ -166,9 +167,11 @@ export class AnswerDetailsComponent implements AfterViewInit, OnDestroy {
         question.is_complete = true;
       }
       this.answer.is_complete = true;
-      this.appStateService.setActiveMenuItem(response.next_question_id);
       this.appStateService.setCompleteQuestionsCount(response.num_complete);
       this.appStateService.setRemainingQuestionsCount(response.num_remaining);
+      if(response.next_question_id){
+        this.appStateService.setActiveMenuItem(response.next_question_id);
+      }
       this.changeDetectorRef.detectChanges();
     });
   }
