@@ -19,7 +19,7 @@
       {{item.text}}
     </button>
   </mat-menu>
-  <button class="toggle-collapse-button" (click)="toggleCollapse()">
+  <button [disabled]="appStateService.getMenuItems().length === 0" class="toggle-collapse-button" (click)="toggleCollapse()">
     <i class="fas" [ngClass]="{'fa-chevron-down': expandedMode, 'fa-chevron-up': !expandedMode}"></i>
   </button>
 </div>
