@@ -157,7 +157,6 @@ export class AnswerDetailsComponent implements AfterViewInit, OnDestroy {
 
   markAsComplete() {
     this.appStateService.markAnswerAsComplete(this.answer.id).subscribe((response: any) => {
-      response.next_question_id = null;
       let {question, subMenuItem, menuItem} = this.appStateService.getQuestionInfoById(this.answer.question);
       const questions = subMenuItem ? subMenuItem.questions : menuItem.questions;
       if (this.appStateService.filterState.isFilterApplied() &&
