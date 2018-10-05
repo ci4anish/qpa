@@ -18,6 +18,7 @@
 }
 
 .checklist-item, .compliance-option{
+  margin-right: 20px;
   margin-bottom: 10px;
 }
 
@@ -46,4 +47,12 @@
 
 .buttons .app-button:not(:last-child){
   margin-right: 10px;
+}
+
+.checkbox-options-form{
+  display: flex;
+  max-height: 390px;
+  overflow-x: auto;
+  flex-direction: column;
+  flex-wrap: wrap;
 }

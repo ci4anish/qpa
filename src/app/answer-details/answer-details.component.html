@@ -9,8 +9,8 @@
     </div>
   </div>
   <div class="question-text">{{answer.question_text}}</div>
-  <div class="checklist-items">
-    <form [formGroup]="checklistItemsForm">
+  <div class="checklist-items" *ngIf="answer.all_checklist_items.length > 0">
+    <form [formGroup]="checklistItemsForm" class="checkbox-options-form">
       <mat-checkbox [formControl]="item"
                     [color]="'primary'"
                     class="checklist-item"
