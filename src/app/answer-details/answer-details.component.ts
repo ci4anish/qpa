@@ -99,6 +99,7 @@ export class AnswerDetailsComponent implements AfterViewInit, OnDestroy {
   complianceOptionForm: FormGroup;
   observationFrom: FormGroup;
   indicatorTooltip: Tooltip;
+  columnCount: number = 1;
   private checklistItemsFormSub: Subscription;
   private complianceOptionFormSub: Subscription;
   private observationFromSub: Subscription;
@@ -132,6 +133,14 @@ export class AnswerDetailsComponent implements AfterViewInit, OnDestroy {
     this.appStateService.fetchAnswer(+this.route.snapshot.paramMap.get('answerId')).pipe(takeUntil(this.ngUnsubscribe)).subscribe((answer: any) => {
       this.answer = answer;
       if (answer.all_checklist_items && answer.all_checklist_items.length > 0) {
+        if (answer.all_checklist_items.length <= 10) {
+          this.columnCount = 1;
+        } else if (answer.all_checklist_items.length > 10 && answer.all_checklist_items.length <= 20) {
+          this.columnCount = 2;
+        } else {
+          this.columnCount = 3;
+        }
+
         this.checklistItemsForm.setControl('checklist_items', this.buildFormArray(answer.all_checklist_items, answer.checklist_items));
       }
       if (answer.compliance_option) {
@@ -168,7 +177,7 @@ export class AnswerDetailsComponent implements AfterViewInit, OnDestroy {
       this.answer.is_complete = true;
       this.appStateService.setCompleteQuestionsCount(response.num_complete);
       this.appStateService.setRemainingQuestionsCount(response.num_remaining);
-      if(response.next_question_id){
+      if (response.next_question_id) {
         this.appStateService.setActiveMenuItem(response.next_question_id);
       }
       this.changeDetectorRef.detectChanges();

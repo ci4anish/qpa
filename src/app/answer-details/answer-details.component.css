@@ -1,36 +1,47 @@
 .checklist-item,
-.compliance-option{
+.compliance-option {
   display: block;
 }
 
-.answer-details-wrapper{
+.answer-details-wrapper {
   padding: 30px 30px 30px 60px;
 }
 
-.title{
+.title {
   font-weight: bold;
   margin-bottom: 30px;
 }
 
-.checklist-items{
+.checklist-items {
   padding-left: 60px;
   margin-bottom: 40px;
 }
 
-.checklist-item, .compliance-option{
-  margin-right: 20px;
-  margin-bottom: 10px;
+.checklist-item, .compliance-option {
+  margin-bottom: 20px;
 }
 
-.question-text, .answer-code, .compliance-options{
+.answer-details-wrapper /deep/ .mat-checkbox-layout {
+  white-space: normal;
+}
+
+.answer-details-wrapper /deep/ .mat-checkbox-layout .mat-checkbox-label {
+  line-height: normal;
+}
+
+.answer-details-wrapper /deep/ .mat-checkbox-inner-container{
+  margin-top: 0;
+}
+
+.question-text, .answer-code, .compliance-options {
   margin-bottom: 40px;
 }
 
-.full-width{
+.full-width {
   width: 100%;
 }
 
-.observation-input{
+.observation-input {
   height: 150px;
 }
 
@@ -40,19 +51,23 @@
   align-items: center;
 }
 
-.sub-toolbar-title{
+.sub-toolbar-title {
   flex-grow: 1;
   font-weight: bold;
 }
 
-.buttons .app-button:not(:last-child){
+.buttons .app-button:not(:last-child) {
   margin-right: 10px;
 }
 
-.checkbox-options-form{
-  display: flex;
-  max-height: 390px;
-  overflow-x: auto;
-  flex-direction: column;
-  flex-wrap: wrap;
+.checkbox-options-form.one-column-grid {
+ column-count: 1;
+}
+
+.checkbox-options-form.two-column-grid {
+  column-count: 2;
+}
+
+.checkbox-options-form.three-column-grid {
+  column-count: 3;
 }
