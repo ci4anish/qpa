@@ -86,7 +86,7 @@
                  [ngClass]="{
                       completed: question.is_complete,
                       'not-applicable': question.not_applicable,
-                      selected: question === getSelectedQuestion()
+                      selected: question.id === getSelectedQuestion().id
                   }"
                  *ngFor="let question of menuItem.questions"
                  routerLink="/answer/{{question.answer_id}}">

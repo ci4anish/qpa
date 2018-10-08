@@ -128,8 +128,11 @@ export class QuestionsMenuComponent implements OnInit, OnDestroy {
           this.appStateService.setFirstMenuItemActive();
           this.expendMenu();
         } else {
+          this.router.navigate([`/answer/${this.getSelectedQuestion().answer_id}`]);
           this.appStateService.selectLeftMenuQuestion(this.appStateService.getQuestionInfoById(this.getSelectedQuestion().id));
         }
+      } else {
+        this.router.navigate([`/answer`]);
       }
     });
   }

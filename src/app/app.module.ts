@@ -22,13 +22,15 @@ import { AnswerDetailsComponent } from './answer-details/answer-details.componen
 import { AppRoutingModule } from './app-routing.module';
 import { AppStateService } from './app-state.service';
 import { HttpClientModule } from '@angular/common/http';
+import { EmptyAnswerComponent } from './empty-answer/empty-answer.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     SubmitToolbarComponent,
     QuestionsMenuComponent,
-    AnswerDetailsComponent
+    AnswerDetailsComponent,
+    EmptyAnswerComponent
   ],
   imports: [
     BrowserModule,
