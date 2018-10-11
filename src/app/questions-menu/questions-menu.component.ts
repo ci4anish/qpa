@@ -24,12 +24,12 @@ export class QuestionsMenuComponent implements OnInit, OnDestroy {
       colorClass: 'grey'
     },
     {
-      text: 'Completed',
+      text: 'Complete',
       state: CompletionState.completed,
       colorClass: 'green'
     },
     {
-      text: 'Incompleted',
+      text: 'Incomplete',
       state: CompletionState.incompleted,
       colorClass: 'red'
     }
